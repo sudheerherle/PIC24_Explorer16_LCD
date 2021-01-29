@@ -1,0 +1,3852 @@
+Disassembly Listing for E16LCDDemo_dspic33fj256gp710a_pim_1
+Generated From:
+C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/dist/dspic33fj256gp710a_pim/debug/E16LCDDemo_dspic33fj256gp710a_pim_1.X.debug.elf
+May 13, 2019 1:00:22 PM
+
+---  C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/system_config/exp16/dspic33fj256gp710a_pim/system.c
+1:                 /*******************************************************************************
+2:                  System Initialization File
+3:                 
+4:                   File Name:
+5:                     sys_init.c
+6:                 
+7:                   Summary:
+8:                     System Initialization.
+9:                 
+10:                  Description:
+11:                    This file contains source code necessary to initialize the system.
+12:                 *******************************************************************************/
+13:                
+14:                // DOM-IGNORE-BEGIN
+15:                /*******************************************************************************
+16:                Copyright (c) 2013 released Microchip Technology Inc.  All rights reserved.
+17:                
+18:                Microchip licenses to you the right to use, modify, copy and distribute
+19:                Software only when embedded on a Microchip microcontroller or digital signal
+20:                controller that is integrated into your product or third party product
+21:                (pursuant to the sublicense terms in the accompanying license agreement).
+22:                
+23:                You should refer to the license agreement accompanying this Software for
+24:                additional information regarding your rights and obligations.
+25:                
+26:                SOFTWARE AND DOCUMENTATION ARE PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND,
+27:                EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF
+28:                MERCHANTABILITY, TITLE, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE.
+29:                IN NO EVENT SHALL MICROCHIP OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER
+30:                CONTRACT, NEGLIGENCE, STRICT LIABILITY, CONTRIBUTION, BREACH OF WARRANTY, OR
+31:                OTHER LEGAL EQUITABLE THEORY ANY DIRECT OR INDIRECT DAMAGES OR EXPENSES
+32:                INCLUDING BUT NOT LIMITED TO ANY INCIDENTAL, SPECIAL, INDIRECT, PUNITIVE OR
+33:                CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF PROCUREMENT OF
+34:                SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
+35:                (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
+36:                 *******************************************************************************/
+37:                // DOM-IGNORE-END
+38:                
+39:                
+40:                // ****************************************************************************
+41:                // ****************************************************************************
+42:                // Section: Configuration Bits
+43:                // ****************************************************************************
+44:                // ****************************************************************************
+45:                #include <xc.h>
+46:                #include "app.h"
+47:                
+48:                // FBS
+49:                #pragma config BWRP = WRPROTECT_OFF     // Boot Segment Write Protect (Boot Segment may be written)
+50:                #pragma config BSS = NO_FLASH           // Boot Segment Program Flash Code Protection (No Boot program Flash segment)
+51:                #pragma config RBS = NO_RAM             // Boot Segment RAM Protection (No Boot RAM)
+52:                
+53:                // FSS
+54:                #pragma config SWRP = WRPROTECT_OFF     // Secure Segment Program Write Protect (Secure Segment may be written)
+55:                #pragma config SSS = NO_FLASH           // Secure Segment Program Flash Code Protection (No Secure Segment)
+56:                #pragma config RSS = NO_RAM             // Secure Segment Data RAM Protection (No Secure RAM)
+57:                
+58:                // FGS
+59:                #pragma config GWRP = OFF               // General Code Segment Write Protect (User program memory is not write-protected)
+60:                #pragma config GSS = OFF                // General Segment Code Protection (User program memory is not code-protected)
+61:                
+62:                // FOSCSEL
+63:                #pragma config FNOSC = FRC              // Oscillator Mode (Internal Fast RC (FRC))
+64:                #pragma config IESO = OFF               // Two-speed Oscillator Start-Up Enable (Start up with user-selected oscillator)
+65:                
+66:                // FOSC
+67:                #pragma config POSCMD = XT              // Primary Oscillator Source (XT Oscillator Mode)
+68:                #pragma config OSCIOFNC = ON            // OSC2 Pin Function (OSC2 pin has digital I/O function)
+69:                #pragma config FCKSM = CSDCMD           // Clock Switching and Monitor (Both Clock Switching and Fail-Safe Clock Monitor are disabled)
+70:                
+71:                // FWDT
+72:                #pragma config WDTPOST = PS32768        // Watchdog Timer Postscaler (1:32,768)
+73:                #pragma config WDTPRE = PR128           // WDT Prescaler (1:128)
+74:                #pragma config PLLKEN = ON              // PLL Lock Enable bit (Clock switch to PLL source will wait until the PLL lock signal is valid.)
+75:                #pragma config WINDIS = OFF             // Watchdog Timer Window (Watchdog Timer in Non-Window mode)
+76:                #pragma config FWDTEN = OFF             // Watchdog Timer Enable (Watchdog timer enabled/disabled by user software)
+77:                
+78:                // FPOR
+79:                #pragma config FPWRT = PWR128           // POR Timer Value (128ms)
+80:                
+81:                // FICD
+82:                #pragma config ICS = PGD1               // Comm Channel Select (Communicate on PGC1/EMUC1 and PGD1/EMUD1)
+83:                #pragma config JTAGEN = OFF             // JTAG Port Enable (JTAG is Disabled)
+84:                
+85:                
+86:                // ****************************************************************************
+87:                // ****************************************************************************
+88:                // Section: File Scope Functions
+89:                // ****************************************************************************
+90:                // ****************************************************************************
+91:                
+92:                void SOSC_Configuration ( void ) ;
+93:                
+94:                void __attribute__ ( ( __interrupt__ , auto_psv ) ) _OscillatorFail ( void ) ;
+95:                void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AddressError ( void ) ;
+96:                void __attribute__ ( ( __interrupt__ , auto_psv ) ) _StackError ( void ) ;
+97:                void __attribute__ ( ( __interrupt__ , auto_psv ) ) _MathError ( void ) ;
+98:                
+99:                void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltOscillatorFail ( void ) ;
+100:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltAddressError ( void ) ;
+101:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltStackError ( void ) ;
+102:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltMathError ( void ) ;
+103:               
+104:               // ****************************************************************************
+105:               // ****************************************************************************
+106:               // Section: System Initialization
+107:               // ****************************************************************************
+108:               // ****************************************************************************
+109:               /*******************************************************************************
+110:                 Function:
+111:                   void SYS_Initialize ( void )
+112:               
+113:                 Summary:
+114:                   Initializes the Explorer 16 board peripherals
+115:               
+116:                 Description:
+117:                   This routine initializes the Explorer 16 board peripherals for the demo.
+118:                   In a bare-metal environment (where no OS is supported), this routine should
+119:                   be called almost immediately after entering the "main" routine.
+120:               
+121:                 Precondition:
+122:                   The C-language run-time environment and stack must have been initialized.
+123:               
+124:                 Parameters:
+125:                   None.
+126:               
+127:                 Returns:
+128:                   None.
+129:               
+130:                 Example:
+131:                   <code>
+132:                   SYS_INT_Initialize(NULL);
+133:                   </code>
+134:               
+135:                 Remarks:
+136:                   Basic System Initialization Sequence:
+137:               
+138:                   1.  Initilize minimal board services and processor-specific items
+139:                       (enough to use the board to initialize drivers and services)
+140:                   2.  Initialize all supported system services
+141:                   3.  Initialize all supported modules
+142:                       (libraries, drivers, middleware, and application-level modules)
+143:                   4.  Initialize the main (static) application, if present.
+144:               
+145:                   The order in which services and modules are initialized and started may be
+146:                   important.
+147:               
+148:                */
+149:               
+150:               
+151:               
+152:               void SYS_Initialize ( void )
+153:               {
+000F7E  FA0000     LNK #0x0
+154:                   /* Enable LEDs*/
+155:                   LED_Enable ( LED_D9 ) ;
+000F80  200070     MOV #0x7, W0
+000F82  07FBF4     RCALL LED_Enable
+156:                   LED_Enable ( LED_D10 ) ;
+000F84  200080     MOV #0x8, W0
+000F86  07FBF2     RCALL LED_Enable
+157:               
+158:                   /* Turn On LEDs*/
+159:                   LED_On ( LED_D9 ) ;
+000F88  200070     MOV #0x7, W0
+000F8A  07FAAC     RCALL LED_On
+160:                   LED_On ( LED_D10 ) ;
+000F8C  200080     MOV #0x8, W0
+000F8E  07FAAA     RCALL LED_On
+161:               
+162:                   /* Enable Switch S3*/
+163:                   BUTTON_Enable ( BUTTON_S3 ) ;
+000F90  200010     MOV #0x1, W0
+000F92  07FFAE     RCALL BUTTON_Enable
+164:               
+165:                   /* Enable ADC to the Potentiometer channel */ 
+166:                    
+167:                   ADC_ChannelEnable ( ADC_CHANNEL_POTENTIOMETER ) ;
+000F94  200050     MOV #0x5, W0
+000F96  07FEA3     RCALL ADC_ChannelEnable
+168:               
+169:               
+170:                   /* Initialize LCD*/
+171:                   PRINT_SetConfiguration ( PRINT_CONFIGURATION_LCD ) ;
+000F98  07FD40     RCALL LCD_Initialize
+172:               
+173:                   /* Configure Secondary Ocillator for Timer 1 to work as RTC counter*/
+174:                   SOSC_Configuration ( ) ;
+000F9A  070002     RCALL SOSC_Configuration
+175:               }
+000F9C  FA8000     ULNK
+000F9E  060000     RETURN
+176:               
+177:               void SOSC_Configuration ( void )
+178:               {
+000FA0  FA0006     LNK #0x6
+179:                   char a , b , c , *p ;
+180:               
+181:                   a = 2 ;
+000FA2  B3C020     MOV.B #0x2, W0
+000FA4  784F00     MOV.B W0, [W14]
+182:                   b = 0x46 ;
+000FA6  B3C460     MOV.B #0x46, W0
+000FA8  984710     MOV.B W0, [W14+1]
+183:                   c = 0x57 ;
+000FAA  B3C570     MOV.B #0x57, W0
+000FAC  984720     MOV.B W0, [W14+2]
+184:                   p = (char *) &OSCCON ;
+000FAE  207420     MOV #0x742, W0
+000FB0  980720     MOV W0, [W14+4]
+185:               
+186:                   asm volatile ("mov.b %1,[%0] \n"
+000FB2  90002E     MOV [W14+4], W0
+000FB4  90409E     MOV.B [W14+1], W1
+000FB6  90412E     MOV.B [W14+2], W2
+000FB8  78419E     MOV.B [W14], W3
+000FBA  784801     MOV.B W1, [W0]
+000FBC  784802     MOV.B W2, [W0]
+000FBE  784803     MOV.B W3, [W0]
+187:                               "mov.b %2,[%0] \n"
+188:                               "mov.b %3,[%0] \n" : /* no outputs */ : "r"( p ) , "r"( b ) , "r"( c ) ,
+189:                               "r"( a ) ) ;
+190:               }
+000FC0  FA8000     ULNK
+000FC2  060000     RETURN
+191:               
+192:               // *****************************************************************************
+193:               // *****************************************************************************
+194:               // Section: Interrupt Handlers
+195:               // *****************************************************************************
+196:               // *****************************************************************************
+197:               /*******************************************************************************
+198:               
+199:                 Function:
+200:                  void __attribute__((__interrupt__)) _ADC1Interrupt( void ))
+201:               
+202:                 Summary:
+203:                   ISR routine for the ADC1 Interrupt.
+204:               
+205:                 Description:
+206:                   This is the raw Interrupt Service Routine (ISR) for the ADC 1 interrupt.
+207:                   This routine calls the ADC's interrupt routine to service the
+208:                   interrupt.
+209:               
+210:                 Precondition:
+211:                   The ADC peripheral must have been initialized for ADC 1.
+212:               
+213:                 Parameters:
+214:                   None.
+215:               
+216:                 Returns:
+217:                   None.
+218:               
+219:                 Remarks:
+220:                   This routine must not be "called" as a C-language function is called.  It
+221:                   is "vectored" to by the processor when the interrupt occurs.
+222:                */
+223:               
+224:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _ADC1Interrupt ( void )
+225:               {
+0002C8  F80036     PUSH RCOUNT
+0002CA  BE9F80     MOV.D W0, [W15++]
+0002CC  BE9F82     MOV.D W2, [W15++]
+0002CE  BE9F84     MOV.D W4, [W15++]
+0002D0  BE9F86     MOV.D W6, [W15++]
+0002D2  F80034     PUSH PSVPAG
+0002D4  200000     MOV #0x0, W0
+0002D6  8801A0     MOV W0, PSVPAG
+0002D8  FA0000     LNK #0x0
+226:                   static int count = 0 ;
+227:               
+228:                   /* Simple "I am here" indicator */
+229:                   if ( count++ == 2000 )
+0002DA  804010     MOV count, W0
+0002DC  207D01     MOV #0x7D0, W1
+0002DE  680081     XOR W0, W1, W1
+0002E0  A7F001     BTSC W1, #15
+0002E2  EA0081     NEG W1, W1
+0002E4  E90081     DEC W1, W1
+0002E6  DE08CF     LSR W1, #15, W1
+0002E8  784081     MOV.B W1, W1
+0002EA  E80000     INC W0, W0
+0002EC  884010     MOV W0, count
+0002EE  E00401     CP0.B W1
+0002F0  320003     BRA Z, .L4
+230:                   {
+231:                       LED_Toggle ( LED_D9 ) ;
+0002F2  200070     MOV #0x7, W0
+0002F4  07014F     RCALL LED_Toggle
+232:                       count = 0 ;
+0002F6  EF2802     CLR count
+233:                   }
+234:               
+235:                   /* Save the Potentiometer data */
+236:                   appData.temp1 = ADC1BUF0 ;
+0002F8  801800     MOV ADC1BUF0, W0
+0002FA  884080     MOV W0, 0x810
+237:               
+238:                   /* set flag to update LCD */
+239:                   appData.adc_lcd_update = 1 ;
+0002FC  208120     MOV #0x812, W0
+0002FE  B3C011     MOV.B #0x1, W1
+000300  784801     MOV.B W1, [W0]
+240:               
+241:                   /* reset ADC interrupt flag */
+242:                   IFS0bits.AD1IF = 0 ;
+000302  A9A085     BCLR 0x85, #5
+243:               }
+000304  FA8000     ULNK
+000306  F90034     POP PSVPAG
+000308  BE034F     MOV.D [--W15], W6
+00030A  BE024F     MOV.D [--W15], W4
+00030C  BE014F     MOV.D [--W15], W2
+00030E  BE004F     MOV.D [--W15], W0
+000310  F90036     POP RCOUNT
+000312  064000     RETFIE
+244:               /*******************************************************************************
+245:                 Function:
+246:                  void __attribute__((__interrupt__)) _T1Interrupt( void ))
+247:               
+248:                 Summary:
+249:                   ISR routine for the T1 Interrupt.
+250:               
+251:                 Description:
+252:                   This is the raw Interrupt Service Routine (ISR) for the Timer 3 interrupt.
+253:                   This routine calls the Timer1's interrupt routine to service the
+254:                   interrupt.
+255:               
+256:                 Precondition:
+257:                   The Timer peripheral must have been initialized for Timer 3.
+258:               
+259:                 Parameters:
+260:                   None.
+261:               
+262:                 Returns:
+263:                   None.
+264:               
+265:                 Remarks:
+266:                   This routine must not be "called" as a C-language function is called.  It
+267:                   is "vectored" to by the processor when the interrupt occurs.
+268:                */
+269:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _T1Interrupt ( void )
+270:               {
+000314  F80036     PUSH RCOUNT
+000316  BE9F80     MOV.D W0, [W15++]
+000318  BE9F82     MOV.D W2, [W15++]
+00031A  BE9F84     MOV.D W4, [W15++]
+00031C  BE9F86     MOV.D W6, [W15++]
+00031E  F80034     PUSH PSVPAG
+000320  200000     MOV #0x0, W0
+000322  8801A0     MOV W0, PSVPAG
+000324  FA0000     LNK #0x0
+271:                   /* update seconds */
+272:                   if ( appData.seconds < 59 )
+000326  208060     MOV #0x806, W0
+000328  784090     MOV.B [W0], W1
+00032A  B3C3A0     MOV.B #0x3A, W0
+00032C  50CF80     SUB.B W1, W0, [W15]
+00032E  3E0006     BRA GTU, .L6
+273:                   {
+274:                       appData.seconds++ ;
+000330  208060     MOV #0x806, W0
+000332  784010     MOV.B [W0], W0
+000334  E84080     INC.B W0, W1
+000336  208060     MOV #0x806, W0
+000338  784801     MOV.B W1, [W0]
+00033A  37001E     BRA .L7
+275:                   }
+276:                       /* update minutes */
+277:                   else
+278:                   {
+279:                       appData.seconds = 0x00 ;
+00033C  208060     MOV #0x806, W0
+00033E  EB4080     CLR.B W1
+000340  784801     MOV.B W1, [W0]
+280:                       if ( appData.minutes < 59 )
+000342  208050     MOV #0x805, W0
+000344  784090     MOV.B [W0], W1
+000346  B3C3A0     MOV.B #0x3A, W0
+000348  50CF80     SUB.B W1, W0, [W15]
+00034A  3E0006     BRA GTU, .L8
+281:                       {
+282:                           appData.minutes++ ;
+00034C  208050     MOV #0x805, W0
+00034E  784010     MOV.B [W0], W0
+000350  E84080     INC.B W0, W1
+000352  208050     MOV #0x805, W0
+000354  784801     MOV.B W1, [W0]
+000356  370010     BRA .L7
+283:                       }
+284:                           /* update hours */
+285:                       else
+286:                       {
+287:                           appData.minutes = 0x00 ;
+000358  208050     MOV #0x805, W0
+00035A  EB4080     CLR.B W1
+00035C  784801     MOV.B W1, [W0]
+288:                           if ( appData.hours < 23 )
+00035E  208040     MOV #0x804, W0
+000360  784010     MOV.B [W0], W0
+000362  504FF6     SUB.B W0, #0x16, [W15]
+000364  3E0006     BRA GTU, .L9
+289:                           {
+290:                               appData.hours ++ ;
+000366  208040     MOV #0x804, W0
+000368  784010     MOV.B [W0], W0
+00036A  E84080     INC.B W0, W1
+00036C  208040     MOV #0x804, W0
+00036E  784801     MOV.B W1, [W0]
+000370  370003     BRA .L7
+291:                           }
+292:                           else
+293:                           {
+294:                               appData.hours = 0x00 ;
+000372  208040     MOV #0x804, W0
+000374  EB4080     CLR.B W1
+000376  784801     MOV.B W1, [W0]
+295:                           }
+296:                       }
+297:                   }
+298:               
+299:                   /* set flag to update LCD */
+300:                   appData.rtc_lcd_update = 1 ;
+000378  2080A0     MOV #0x80A, W0
+00037A  B3C011     MOV.B #0x1, W1
+00037C  784801     MOV.B W1, [W0]
+301:               
+302:                   /* Toggle LED at 1 Hz rate */
+303:                   LED_Toggle ( LED_D10 ) ;
+00037E  200080     MOV #0x8, W0
+000380  070109     RCALL LED_Toggle
+304:               
+305:                   /* reset Timer 1 interrupt flag */
+306:                   IFS0bits.T1IF = 0 ;
+000382  A96084     BCLR IFS0, #3
+307:               }
+000384  FA8000     ULNK
+000386  F90034     POP PSVPAG
+000388  BE034F     MOV.D [--W15], W6
+00038A  BE024F     MOV.D [--W15], W4
+00038C  BE014F     MOV.D [--W15], W2
+00038E  BE004F     MOV.D [--W15], W0
+000390  F90036     POP RCOUNT
+000392  064000     RETFIE
+308:               
+309:               // *****************************************************************************
+310:               // *****************************************************************************
+311:               // Section: Primary Exception Vector handlers
+312:               // *****************************************************************************
+313:               // *****************************************************************************
+314:               
+315:               // *****************************************************************************
+316:               /*  void __attribute__((__interrupt__,auto_psv)) _OscillatorFail(void)
+317:               
+318:                 Summary:
+319:                   Provides the required exception vector handlers for Oscillator trap
+320:               
+321:                 Description:
+322:                  This routine is used if INTCON2bits.ALTIVT = 0 and it handles the oscillator
+323:                trap.
+324:               
+325:                 Remarks:
+326:                  All trap service routines in this file simply ensure that device
+327:                  continuously executes code within the trap service routine. Users
+328:                  may modify the basic framework provided here to suit to the needs
+329:                  of their application.
+330:                */
+331:               
+332:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _OscillatorFail ( void )
+333:               {
+000394  F80034     PUSH PSVPAG
+000396  781F88     MOV W8, [W15++]
+000398  200008     MOV #0x0, W8
+00039A  8801A8     MOV W8, PSVPAG
+00039C  78044F     MOV [--W15], W8
+00039E  FA0000     LNK #0x0
+334:                   INTCON1bits.OSCFAIL = 0 ;        //Clear the trap flag
+0003A0  A92080     BCLR INTCON1, #1
+335:                   while (1) ;
+0003A2  37FFFF     BRA .L11
+336:               }
+337:               
+338:               // *****************************************************************************
+339:               /*  void __attribute__((__interrupt__,auto_psv)) _AddressError(void)
+340:               
+341:                 Summary:
+342:                   Provides the required exception vector handlers for Address Error trap
+343:               
+344:                 Description:
+345:                  This routine is used if INTCON2bits.ALTIVT = 0 and it handles the address
+346:                error trap.
+347:               
+348:                 Remarks:
+349:                  All trap service routines in this file simply ensure that device
+350:                  continuously executes code within the trap service routine. Users
+351:                  may modify the basic framework provided here to suit to the needs
+352:                  of their application.
+353:                */
+354:               
+355:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AddressError ( void )
+356:               {
+0003A4  F80034     PUSH PSVPAG
+0003A6  781F88     MOV W8, [W15++]
+0003A8  200008     MOV #0x0, W8
+0003AA  8801A8     MOV W8, PSVPAG
+0003AC  78044F     MOV [--W15], W8
+0003AE  FA0000     LNK #0x0
+357:                   INTCON1bits.ADDRERR = 0 ;        //Clear the trap flag
+0003B0  A96080     BCLR INTCON1, #3
+358:                   while (1) ;
+0003B2  37FFFF     BRA .L13
+359:               }
+360:               
+361:               // *****************************************************************************
+362:               /*  void __attribute__((__interrupt__,auto_psv)) _StackError(void))
+363:               
+364:                 Summary:
+365:                   Provides the required exception vector handlers for Stack Error trap
+366:               
+367:                 Description:
+368:                  This routine is used if INTCON2bits.ALTIVT = 0 and it handles the stack
+369:                error trap.
+370:               
+371:                 Remarks:
+372:                  All trap service routines in this file simply ensure that device
+373:                  continuously executes code within the trap service routine. Users
+374:                  may modify the basic framework provided here to suit to the needs
+375:                  of their application.
+376:                */
+377:               
+378:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _StackError ( void )
+379:               {
+0003B4  F80034     PUSH PSVPAG
+0003B6  781F88     MOV W8, [W15++]
+0003B8  200008     MOV #0x0, W8
+0003BA  8801A8     MOV W8, PSVPAG
+0003BC  78044F     MOV [--W15], W8
+0003BE  FA0000     LNK #0x0
+380:                   INTCON1bits.STKERR = 0 ;         //Clear the trap flag
+0003C0  A94080     BCLR INTCON1, #2
+381:                   while (1) ;
+0003C2  37FFFF     BRA .L15
+382:               }
+383:               
+384:               // *****************************************************************************
+385:               /*  void __attribute__((__interrupt__,auto_psv)) _MathError(void))
+386:               
+387:                 Summary:
+388:                   Provides the required exception vector handlers for Math Error trap
+389:               
+390:                 Description:
+391:                  This routine is used if INTCON2bits.ALTIVT = 0 and it handles the math
+392:                error trap.
+393:               
+394:                 Remarks:
+395:                  All trap service routines in this file simply ensure that device
+396:                  continuously executes code within the trap service routine. Users
+397:                  may modify the basic framework provided here to suit to the needs
+398:                  of their application.
+399:                */
+400:               
+401:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _MathError ( void )
+402:               {
+0003C4  F80034     PUSH PSVPAG
+0003C6  781F88     MOV W8, [W15++]
+0003C8  200008     MOV #0x0, W8
+0003CA  8801A8     MOV W8, PSVPAG
+0003CC  78044F     MOV [--W15], W8
+0003CE  FA0000     LNK #0x0
+403:                   INTCON1bits.MATHERR = 0 ;        //Clear the trap flag
+0003D0  A98080     BCLR INTCON1, #4
+404:                   while (1) ;
+0003D2  37FFFF     BRA .L17
+405:               }
+406:               
+407:               // *****************************************************************************
+408:               /*  void __attribute__((__interrupt__,auto_psv)) _AltDMACError(void))
+409:               
+410:                 Summary:
+411:                   Provides the required exception vector handlers for DMA Error trap
+412:               
+413:                 Description:
+414:                  This routine is used if INTCON2bits.ALTIVT = 0 and it handles the DMA
+415:                error trap.
+416:               
+417:                 Remarks:
+418:                  All trap service routines in this file simply ensure that device
+419:                  continuously executes code within the trap service routine. Users
+420:                  may modify the basic framework provided here to suit to the needs
+421:                  of their application.
+422:                */
+423:               
+424:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _DMACError ( void )
+425:               {
+0003D4  F80034     PUSH PSVPAG
+0003D6  781F88     MOV W8, [W15++]
+0003D8  200008     MOV #0x0, W8
+0003DA  8801A8     MOV W8, PSVPAG
+0003DC  78044F     MOV [--W15], W8
+0003DE  FA0000     LNK #0x0
+426:                   DMACS0 = 0 ;
+0003E0  EF23E0     CLR DMACS0
+427:                   INTCON1bits.DMACERR = 0 ;
+0003E2  A9A080     BCLR INTCON1, #5
+428:                   while (1) ;
+0003E4  37FFFF     BRA .L19
+429:               }
+430:               
+431:               // *****************************************************************************
+432:               // *****************************************************************************
+433:               // Section: Alternate Exception Vector handlers
+434:               // *****************************************************************************
+435:               // *****************************************************************************
+436:               
+437:               // *****************************************************************************
+438:               /*  void __attribute__((__interrupt__,auto_psv)) _AltOscillatorFail(void)
+439:               
+440:                 Summary:
+441:                   Provides the required exception vector handlers for Oscillator trap
+442:               
+443:                 Description:
+444:                  This routine is used if INTCON2bits.ALTIVT = 1 and it handles the oscillator
+445:                trap.
+446:               
+447:                 Remarks:
+448:                  All trap service routines in this file simply ensure that device
+449:                  continuously executes code within the trap service routine. Users
+450:                  may modify the basic framework provided here to suit to the needs
+451:                  of their application.
+452:                */
+453:               
+454:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltOscillatorFail ( void )
+455:               {
+0003E6  F80034     PUSH PSVPAG
+0003E8  781F88     MOV W8, [W15++]
+0003EA  200008     MOV #0x0, W8
+0003EC  8801A8     MOV W8, PSVPAG
+0003EE  78044F     MOV [--W15], W8
+0003F0  FA0000     LNK #0x0
+456:                   INTCON1bits.OSCFAIL = 0 ;
+0003F2  A92080     BCLR INTCON1, #1
+457:                   while (1) ;
+0003F4  37FFFF     BRA .L21
+458:               }
+459:               
+460:               // *****************************************************************************
+461:               /*  void __attribute__((__interrupt__,auto_psv)) _AltAddressError(void)
+462:               
+463:                 Summary:
+464:                   Provides the required exception vector handlers for Address Error trap
+465:               
+466:                 Description:
+467:                  This routine is used if INTCON2bits.ALTIVT = 1 and it handles the address
+468:                error trap.
+469:               
+470:                 Remarks:
+471:                  All trap service routines in this file simply ensure that device
+472:                  continuously executes code within the trap service routine. Users
+473:                  may modify the basic framework provided here to suit to the needs
+474:                  of their application.
+475:                */
+476:               
+477:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltAddressError ( void )
+478:               {
+0003F6  F80034     PUSH PSVPAG
+0003F8  781F88     MOV W8, [W15++]
+0003FA  200008     MOV #0x0, W8
+0003FC  8801A8     MOV W8, PSVPAG
+0003FE  78044F     MOV [--W15], W8
+000400  FA0000     LNK #0x0
+479:                   INTCON1bits.ADDRERR = 0 ;
+000402  A96080     BCLR INTCON1, #3
+480:                   while (1) ;
+000404  37FFFF     BRA .L23
+481:               }
+482:               
+483:               // *****************************************************************************
+484:               /*  void __attribute__((__interrupt__,auto_psv)) _AltStackError(void))
+485:               
+486:                 Summary:
+487:                   Provides the required exception vector handlers for Stack Error trap
+488:               
+489:                 Description:
+490:                  This routine is used if INTCON2bits.ALTIVT = 1 and it handles the stack
+491:                error trap.
+492:               
+493:                 Remarks:
+494:                  All trap service routines in this file simply ensure that device
+495:                  continuously executes code within the trap service routine. Users
+496:                  may modify the basic framework provided here to suit to the needs
+497:                  of their application.
+498:                */
+499:               
+500:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltStackError ( void )
+501:               {
+000406  F80034     PUSH PSVPAG
+000408  781F88     MOV W8, [W15++]
+00040A  200008     MOV #0x0, W8
+00040C  8801A8     MOV W8, PSVPAG
+00040E  78044F     MOV [--W15], W8
+000410  FA0000     LNK #0x0
+502:                   INTCON1bits.STKERR = 0 ;
+000412  A94080     BCLR INTCON1, #2
+503:                   while (1) ;
+000414  37FFFF     BRA .L25
+504:               }
+505:               
+506:               // *****************************************************************************
+507:               /*  void __attribute__((__interrupt__,auto_psv)) _AltMathError(void))
+508:               
+509:                 Summary:
+510:                   Provides the required exception vector handlers for Math Error trap
+511:               
+512:                 Description:
+513:                  This routine is used if INTCON2bits.ALTIVT = 1 and it handles the math
+514:                error trap.
+515:               
+516:                 Remarks:
+517:                  All trap service routines in this file simply ensure that device
+518:                  continuously executes code within the trap service routine. Users
+519:                  may modify the basic framework provided here to suit to the needs
+520:                  of their application.
+521:                */
+522:               
+523:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltMathError ( void )
+524:               {
+000416  F80034     PUSH PSVPAG
+000418  781F88     MOV W8, [W15++]
+00041A  200008     MOV #0x0, W8
+00041C  8801A8     MOV W8, PSVPAG
+00041E  78044F     MOV [--W15], W8
+000420  FA0000     LNK #0x0
+525:                   INTCON1bits.MATHERR = 0 ;
+000422  A98080     BCLR INTCON1, #4
+526:                   while (1) ;
+000424  37FFFF     BRA .L27
+527:               }
+528:               
+529:               // *****************************************************************************
+530:               /*  void __attribute__((__interrupt__,auto_psv)) _AltDMACError(void))
+531:               
+532:                 Summary:
+533:                   Provides the required exception vector handlers for DMA Error trap
+534:               
+535:                 Description:
+536:                  This routine is used if INTCON2bits.ALTIVT = 1 and it handles the DMA
+537:                error trap.
+538:               
+539:                 Remarks:
+540:                  All trap service routines in this file simply ensure that device
+541:                  continuously executes code within the trap service routine. Users
+542:                  may modify the basic framework provided here to suit to the needs
+543:                  of their application.
+544:                */
+545:               
+546:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _AltDMACError ( void )
+547:               {
+000426  F80034     PUSH PSVPAG
+000428  781F88     MOV W8, [W15++]
+00042A  200008     MOV #0x0, W8
+00042C  8801A8     MOV W8, PSVPAG
+00042E  78044F     MOV [--W15], W8
+000430  FA0000     LNK #0x0
+548:                   DMACS0 = 0 ;
+000432  EF23E0     CLR DMACS0
+549:                   INTCON1bits.DMACERR = 0 ;
+000434  A9A080     BCLR INTCON1, #5
+550:                   while (1) ;
+000436  37FFFF     BRA .L29
+551:               }
+---  C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/main.c  -----------------------
+1:                 /*******************************************************************************
+2:                  Explorer 16 Demo Main File
+3:                 
+4:                   Company:
+5:                     Microchip Technology Inc.
+6:                 
+7:                   File Name:
+8:                     main.c
+9:                 
+10:                  Summary:
+11:                    Explorer 16 Demo Main File.
+12:                
+13:                  Description: 
+14:                    This is the main file for the Explorer 16 Demo. It contains the main demo
+15:                    flow and calls processor specific files for processor specific
+16:                    implementations.
+17:                 *******************************************************************************/
+18:                
+19:                // DOM-IGNORE-BEGIN
+20:                /*******************************************************************************
+21:                Copyright (c) 2013 released Microchip Technology Inc.  All rights reserved.
+22:                
+23:                Microchip licenses to you the right to use, modify, copy and distribute
+24:                Software only when embedded on a Microchip microcontroller or digital signal
+25:                controller that is integrated into your product or third party product
+26:                (pursuant to the sublicense terms in the accompanying license agreement).
+27:                
+28:                You should refer to the license agreement accompanying this Software for
+29:                additional information regarding your rights and obligations.
+30:                
+31:                SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+32:                EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF
+33:                MERCHANTABILITY, TITLE, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE.
+34:                IN NO EVENT SHALL MICROCHIP OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER
+35:                CONTRACT, NEGLIGENCE, STRICT LIABILITY, CONTRIBUTION, BREACH OF WARRANTY, OR
+36:                OTHER LEGAL EQUITABLE THEORY ANY DIRECT OR INDIRECT DAMAGES OR EXPENSES
+37:                INCLUDING BUT NOT LIMITED TO ANY INCIDENTAL, SPECIAL, INDIRECT, PUNITIVE OR
+38:                CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF PROCUREMENT OF
+39:                SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
+40:                (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
+41:                 *******************************************************************************/
+42:                // DOM-IGNORE-END
+43:                
+44:                
+45:                // *****************************************************************************
+46:                // *****************************************************************************
+47:                // Section: Included Files
+48:                // *****************************************************************************
+49:                // *****************************************************************************
+50:                
+51:                #include <stdio.h>
+52:                #include <stdlib.h>
+53:                #include <stddef.h>
+54:                #include <stdbool.h>
+55:                
+56:                #include "app.h"
+57:                
+58:                #define ONE_VOLT 310
+59:                #define ONE_TENTH_VOLT 31
+60:                #define ONE_HUNDREDTH_VOLT 3
+61:                
+62:                // *****************************************************************************
+63:                // *****************************************************************************
+64:                // Section: File Scope Variables and Functions
+65:                // *****************************************************************************
+66:                // *****************************************************************************
+67:                
+68:                
+69:                void Update_LCD ( void ) ;
+70:                void SYS_Initialize ( void ) ;
+71:                extern void ConvertADCVoltage ( unsigned int  ) ;
+72:                extern void Hex2Dec ( unsigned char ) ;
+73:                
+74:                
+75:                APP_DATA appData = {
+76:                                    .messageLine1 = "Explorer 16 Demo" ,
+77:                                    .messageLine2 = "Press S3 to cont" ,
+78:                                    .messageTime = "Time 00: 00: 00 " ,
+79:                                    .messageADC = " Pot = 0.00 Vdc "
+80:                } ;
+81:                
+82:                // *****************************************************************************
+83:                // *****************************************************************************
+84:                // Section: Main Entry Point
+85:                // *****************************************************************************
+86:                // *****************************************************************************
+87:                int main ( void )
+88:                {
+0007C4  FA0000     LNK #0x0
+89:                
+90:                
+91:                    /* Call the System Intialize routine*/
+92:                    SYS_Initialize ( ) ;
+0007C6  0703DB     RCALL SYS_Initialize
+93:                
+94:                    /* Display welcome message */
+95:                    LCD_PutString ( (char*) &appData.messageLine1[0] , sizeof (appData.messageLine1 ) - 1  ) ;
+0007C8  200111     MOV #0x11, W1
+0007CA  208130     MOV #0x813, W0
+0007CC  070147     RCALL LCD_PutString
+96:                    LCD_PutString ( (char*) &appData.messageLine2[0] , sizeof (appData.messageLine2 ) - 1  ) ;
+0007CE  200111     MOV #0x11, W1
+0007D0  208250     MOV #0x825, W0
+0007D2  070144     RCALL LCD_PutString
+97:                
+98:                    /* wait here until switch S3 is pressed */
+99:                    while (!BUTTON_IsPressed ( BUTTON_S3 )) ;
+0007D4  000000     NOP
+0007D6  200010     MOV #0x1, W0
+0007D8  070351     RCALL BUTTON_IsPressed
+0007DA  A20400     BTG.B W0, #0
+0007DC  E00400     CP0.B W0
+0007DE  3AFFFB     BRA NZ, .L2
+100:               
+101:                   /*Initialize Timer*/
+102:                   TIMER_SetConfiguration ( TIMER_CONFIGURATION_RTCC ) ;
+0007E0  200010     MOV #0x1, W0
+0007E2  070318     RCALL TIMER_SetConfiguration
+103:               
+104:                   /*Initialize ADC configure it as 10 bit interrupt driven mode*/
+105:                   ADC_SetConfiguration ( ADC_CONFIGURATION_AUTO_SAMPLE_CONVERT ) ;
+0007E4  200010     MOV #0x1, W0
+0007E6  07028B     RCALL ADC_SetConfiguration
+106:                   
+107:                   /* Display initial ADC and Timer messages */
+108:                   LCD_PutString ( (char*) &appData.messageTime[0] , sizeof (appData.messageTime ) - 1 ) ;
+0007E8  200111     MOV #0x11, W1
+0007EA  208370     MOV #0x837, W0
+0007EC  070137     RCALL LCD_PutString
+109:                   LCD_PutString ( (char*) &appData.messageADC[0] , sizeof (appData.messageADC ) - 1 ) ;
+0007EE  200111     MOV #0x11, W1
+0007F0  208490     MOV #0x849, W0
+0007F2  070134     RCALL LCD_PutString
+0007F4  370003     BRA .L4
+110:               
+111:               
+112:               
+113:               
+114:                   /* Infinite Loop */
+115:                   while ( 1 )
+116:                   {
+117:                       /* check if time to update LCD with Timer data */
+118:                       if ( appData.rtc_lcd_update )
+0007FC  2080A0     MOV #0x80A, W0
+0007FE  784010     MOV.B [W0], W0
+000800  E00400     CP0.B W0
+000802  32FFF9     BRA Z, .L5
+119:                       {
+120:                           Hex2Dec ( appData.hours ) ;
+000804  208040     MOV #0x804, W0
+000806  784010     MOV.B [W0], W0
+000808  0700D7     RCALL Hex2Dec
+121:                           Update_LCD ( ) ;
+00080A  070032     RCALL Update_LCD
+122:                           appData.rtc_lcd_update = 0 ;
+00080C  2080A0     MOV #0x80A, W0
+00080E  EB4080     CLR.B W1
+000810  784801     MOV.B W1, [W0]
+123:               
+124:                           /* check if time to update LCD with ADC data */
+125:                           if ( appData.adc_lcd_update )
+000812  208120     MOV #0x812, W0
+000814  784010     MOV.B [W0], W0
+000816  E00400     CP0.B W0
+000818  32FFF0     BRA Z, .L6
+126:                           {
+127:               
+128:                               ConvertADCVoltage ( appData.temp1 ) ;
+00081A  804080     MOV 0x810, W0
+00081C  07005C     RCALL ConvertADCVoltage
+129:                               LCD_PutChar ( ' ' ) ;
+00081E  B3C200     MOV.B #0x20, W0
+000820  07013A     RCALL LCD_PutChar
+130:                               LCD_PutChar ( ' ' ) ;
+000822  B3C200     MOV.B #0x20, W0
+000824  070138     RCALL LCD_PutChar
+131:                               LCD_PutChar ( 'P' ) ;
+000826  B3C500     MOV.B #0x50, W0
+000828  070136     RCALL LCD_PutChar
+132:                               LCD_PutChar ( 'o' ) ;
+00082A  B3C6F0     MOV.B #0x6F, W0
+00082C  070134     RCALL LCD_PutChar
+133:                               LCD_PutChar ( 't' ) ;
+00082E  B3C740     MOV.B #0x74, W0
+000830  070132     RCALL LCD_PutChar
+134:                               LCD_PutChar ( ' ' ) ;
+000832  B3C200     MOV.B #0x20, W0
+000834  070130     RCALL LCD_PutChar
+135:                               LCD_PutChar ( '=' ) ;
+000836  B3C3D0     MOV.B #0x3D, W0
+000838  07012E     RCALL LCD_PutChar
+136:                               LCD_PutChar ( ' ' ) ;
+00083A  B3C200     MOV.B #0x20, W0
+00083C  07012C     RCALL LCD_PutChar
+137:                               LCD_PutChar ( appData.adones ) ;
+00083E  2080B0     MOV #0x80B, W0
+000840  784010     MOV.B [W0], W0
+000842  070129     RCALL LCD_PutChar
+138:                               LCD_PutChar ( '.' ) ;
+000844  B3C2E0     MOV.B #0x2E, W0
+000846  070127     RCALL LCD_PutChar
+139:                               LCD_PutChar ( appData.adtens ) ;
+000848  2080C0     MOV #0x80C, W0
+00084A  784010     MOV.B [W0], W0
+00084C  070124     RCALL LCD_PutChar
+140:                               LCD_PutChar ( appData.adhunds ) ;
+00084E  2080D0     MOV #0x80D, W0
+000850  784010     MOV.B [W0], W0
+000852  070121     RCALL LCD_PutChar
+141:                               LCD_PutChar ( ' ' ) ;
+000854  B3C200     MOV.B #0x20, W0
+000856  07011F     RCALL LCD_PutChar
+142:                               LCD_PutChar ( 'V' ) ;
+000858  B3C560     MOV.B #0x56, W0
+00085A  07011D     RCALL LCD_PutChar
+143:                               LCD_PutChar ( 'd' ) ;
+00085C  B3C640     MOV.B #0x64, W0
+00085E  07011B     RCALL LCD_PutChar
+144:                               LCD_PutChar ( 'c' ) ;
+000860  B3C630     MOV.B #0x63, W0
+000862  070119     RCALL LCD_PutChar
+145:                               LCD_PutChar ( ' ' ) ;
+000864  B3C200     MOV.B #0x20, W0
+000866  070117     RCALL LCD_PutChar
+146:                               appData.adc_lcd_update = 0 ;
+000868  208120     MOV #0x812, W0
+00086A  EB4080     CLR.B W1
+00086C  784801     MOV.B W1, [W0]
+147:                           }
+148:               
+149:                       }
+150:                   } ;
+0007F6  000000     NOP
+0007F8  370001     BRA .L4
+0007FA  000000     NOP
+00086E  37FFC6     BRA .L4
+151:               }
+152:               /*******************************************************************************
+153:               
+154:                 Function:
+155:                  void Update_LCD( void )
+156:               
+157:                 Summary:
+158:                   Function to update LCD
+159:               
+160:                 Description:
+161:                   This function will update the time on the LCD
+162:               
+163:                 Precondition:
+164:                   None.
+165:               
+166:                 Parameters:
+167:                   None.
+168:               
+169:                 Returns:
+170:                   None.
+171:               
+172:                 Remarks:
+173:               
+174:                */
+175:               /******************************************************************************/
+176:               void Update_LCD ( void )
+177:               {
+000870  FA0000     LNK #0x0
+178:                   LCD_PutChar ( 'T' ) ;
+000872  B3C540     MOV.B #0x54, W0
+000874  070110     RCALL LCD_PutChar
+179:                   LCD_PutChar ( 'i' ) ;
+000876  B3C690     MOV.B #0x69, W0
+000878  07010E     RCALL LCD_PutChar
+180:                   LCD_PutChar ( 'm' ) ;
+00087A  B3C6D0     MOV.B #0x6D, W0
+00087C  07010C     RCALL LCD_PutChar
+181:                   LCD_PutChar ( 'e' ) ;
+00087E  B3C650     MOV.B #0x65, W0
+000880  07010A     RCALL LCD_PutChar
+182:                   LCD_PutChar ( ' ' ) ;
+000882  B3C200     MOV.B #0x20, W0
+000884  070108     RCALL LCD_PutChar
+183:                   LCD_PutChar ( appData.tens + 0x30 ) ;
+000886  208080     MOV #0x808, W0
+000888  784010     MOV.B [W0], W0
+00088A  B04300     ADD.B #0x30, W0
+00088C  070104     RCALL LCD_PutChar
+184:                   LCD_PutChar ( appData.ones + 0x30 ) ;
+00088E  208090     MOV #0x809, W0
+000890  784010     MOV.B [W0], W0
+000892  B04300     ADD.B #0x30, W0
+000894  070100     RCALL LCD_PutChar
+185:               
+186:                   Hex2Dec ( appData.minutes ) ;
+000896  208050     MOV #0x805, W0
+000898  784010     MOV.B [W0], W0
+00089A  07008E     RCALL Hex2Dec
+187:                   LCD_PutChar ( ':' ) ;
+00089C  B3C3A0     MOV.B #0x3A, W0
+00089E  0700FB     RCALL LCD_PutChar
+188:                   LCD_PutChar ( ' ' ) ;
+0008A0  B3C200     MOV.B #0x20, W0
+0008A2  0700F9     RCALL LCD_PutChar
+189:                   LCD_PutChar ( appData.tens + 0x30 ) ;
+0008A4  208080     MOV #0x808, W0
+0008A6  784010     MOV.B [W0], W0
+0008A8  B04300     ADD.B #0x30, W0
+0008AA  0700F5     RCALL LCD_PutChar
+190:                   LCD_PutChar ( appData.ones + 0x30 ) ;
+0008AC  208090     MOV #0x809, W0
+0008AE  784010     MOV.B [W0], W0
+0008B0  B04300     ADD.B #0x30, W0
+0008B2  0700F1     RCALL LCD_PutChar
+191:               
+192:                   Hex2Dec ( appData.seconds ) ;
+0008B4  208060     MOV #0x806, W0
+0008B6  784010     MOV.B [W0], W0
+0008B8  07007F     RCALL Hex2Dec
+193:                   LCD_PutChar ( ':' ) ;
+0008BA  B3C3A0     MOV.B #0x3A, W0
+0008BC  0700EC     RCALL LCD_PutChar
+194:                   LCD_PutChar ( ' ' ) ;
+0008BE  B3C200     MOV.B #0x20, W0
+0008C0  0700EA     RCALL LCD_PutChar
+195:                   LCD_PutChar ( appData.tens + 0x30 ) ;
+0008C2  208080     MOV #0x808, W0
+0008C4  784010     MOV.B [W0], W0
+0008C6  B04300     ADD.B #0x30, W0
+0008C8  0700E6     RCALL LCD_PutChar
+196:                   LCD_PutChar ( appData.ones + 0x30 ) ;
+0008CA  208090     MOV #0x809, W0
+0008CC  784010     MOV.B [W0], W0
+0008CE  B04300     ADD.B #0x30, W0
+0008D0  0700E2     RCALL LCD_PutChar
+197:               
+198:               }
+0008D2  FA8000     ULNK
+0008D4  060000     RETURN
+199:               
+200:               /*******************************************************************************
+201:               
+202:                 Function:
+203:                  void ConvertADCVoltage ( unsigned int )
+204:               
+205:                 Summary:
+206:                   Function to convert ADC data into volts
+207:               
+208:                 Description:
+209:                    This is the file for the Explorer 16 Dem that converts raw 10 bit ADC data
+210:                   to volts suitable for the LCD display
+211:               
+212:                 Precondition:
+213:                   None.
+214:               
+215:                 Parameters:
+216:                   None.
+217:               
+218:                 Returns:
+219:                   None.
+220:               
+221:                 Remarks:
+222:               
+223:                */
+224:               /******************************************************************************/
+225:               
+226:               void ConvertADCVoltage ( unsigned int adc_conv_data )
+227:               {
+0008D6  FA0002     LNK #0x2
+0008D8  780F00     MOV W0, [W14]
+228:                   /* reset values */
+229:                   appData.adones = 0 ;
+0008DA  2080B0     MOV #0x80B, W0
+0008DC  EB4080     CLR.B W1
+0008DE  784801     MOV.B W1, [W0]
+230:                   appData.adtens = 0 ;
+0008E0  2080C0     MOV #0x80C, W0
+0008E2  EB4080     CLR.B W1
+0008E4  784801     MOV.B W1, [W0]
+231:                   appData.adhunds = 0 ;
+0008E6  2080D0     MOV #0x80D, W0
+0008E8  EB4080     CLR.B W1
+0008EA  784801     MOV.B W1, [W0]
+232:                   appData.adthous = 0 ;
+0008EC  2080E0     MOV #0x80E, W0
+0008EE  EB4080     CLR.B W1
+0008F0  784801     MOV.B W1, [W0]
+233:               
+234:                   while ( adc_conv_data > 0 )
+0008F2  370045     BRA .L9
+00097E  78001E     MOV [W14], W0
+000980  E00000     CP0 W0
+000982  3AFFB8     BRA NZ, .L17
+235:                   {
+236:                       /* test for 1 volt or greater */
+237:                       if ( adc_conv_data > ( ONE_VOLT - 1 ) )
+0008F4  201350     MOV #0x135, W0
+0008F6  78009E     MOV [W14], W1
+0008F8  508F80     SUB W1, W0, [W15]
+0008FA  360008     BRA LEU, .L10
+238:                       {
+239:                           /* increment 1 volt counter */
+240:                           appData.adones++ ;
+0008FC  2080B0     MOV #0x80B, W0
+0008FE  784010     MOV.B [W0], W0
+000900  E84080     INC.B W0, W1
+000902  2080B0     MOV #0x80B, W0
+000904  784801     MOV.B W1, [W0]
+241:               
+242:                           /* subtract 1 volt */
+243:                           adc_conv_data -= ONE_VOLT ;
+000906  2FECA1     MOV #0xFECA, W1
+000908  408F1E     ADD W1, [W14], [W14]
+00090A  370039     BRA .L9
+244:                       }
+245:               
+246:               
+247:                           /* test for 0.1 volt */
+248:                       else if ( adc_conv_data > ( ONE_TENTH_VOLT - 1 ) )
+00090C  78001E     MOV [W14], W0
+00090E  500FFE     SUB W0, #0x1E, [W15]
+000910  360015     BRA LEU, .L11
+249:                       {
+250:                           /* increment tenths */
+251:                           if ( appData.adtens < 9 )
+000912  2080C0     MOV #0x80C, W0
+000914  784010     MOV.B [W0], W0
+000916  504FE8     SUB.B W0, #0x8, [W15]
+000918  3E0006     BRA GTU, .L12
+252:                           {
+253:                               appData.adtens++ ;
+00091A  2080C0     MOV #0x80C, W0
+00091C  784010     MOV.B [W0], W0
+00091E  E84080     INC.B W0, W1
+000920  2080C0     MOV #0x80C, W0
+000922  784801     MOV.B W1, [W0]
+000924  370008     BRA .L13
+254:                           }
+255:                           else
+256:                           {
+257:                               /* tenths has rolled over */
+258:                               appData.adones++ ;
+000926  2080B0     MOV #0x80B, W0
+000928  784010     MOV.B [W0], W0
+00092A  E84080     INC.B W0, W1
+00092C  2080B0     MOV #0x80B, W0
+00092E  784801     MOV.B W1, [W0]
+259:               
+260:                               /* so increment ones and reset tenths */
+261:                               appData.adtens = 0 ;
+000930  2080C0     MOV #0x80C, W0
+000932  EB4080     CLR.B W1
+000934  784801     MOV.B W1, [W0]
+262:                           }
+263:               
+264:                           adc_conv_data -= ONE_TENTH_VOLT ;
+000936  78011E     MOV [W14], W2
+000938  510F7F     SUB W2, #0x1F, [W14]
+00093A  370021     BRA .L9
+265:                       }
+266:               
+267:                           /* test for 0.01 volt */
+268:                       else if ( adc_conv_data > ( ONE_HUNDREDTH_VOLT - 1 ) )
+00093C  78001E     MOV [W14], W0
+00093E  500FE2     SUB W0, #0x2, [W15]
+000940  360015     BRA LEU, .L14
+269:                       {
+270:                           /* increment hundredths */
+271:                           if ( appData.adhunds < 9 )
+000942  2080D0     MOV #0x80D, W0
+000944  784010     MOV.B [W0], W0
+000946  504FE8     SUB.B W0, #0x8, [W15]
+000948  3E0006     BRA GTU, .L15
+272:                           {
+273:                               appData.adhunds++ ;
+00094A  2080D0     MOV #0x80D, W0
+00094C  784010     MOV.B [W0], W0
+00094E  E84080     INC.B W0, W1
+000950  2080D0     MOV #0x80D, W0
+000952  784801     MOV.B W1, [W0]
+000954  370008     BRA .L16
+274:                           }
+275:                           else
+276:                           {
+277:                               /* hundredths has rolled over */
+278:                               appData.adtens++ ;
+000956  2080C0     MOV #0x80C, W0
+000958  784010     MOV.B [W0], W0
+00095A  E84080     INC.B W0, W1
+00095C  2080C0     MOV #0x80C, W0
+00095E  784801     MOV.B W1, [W0]
+279:               
+280:                               /* so increment tenths and reset hundredths */
+281:                               appData.adhunds = 0 ;
+000960  2080D0     MOV #0x80D, W0
+000962  EB4080     CLR.B W1
+000964  784801     MOV.B W1, [W0]
+282:                           }
+283:               
+284:                           adc_conv_data -= ONE_HUNDREDTH_VOLT ;
+000966  78009E     MOV [W14], W1
+000968  508F63     SUB W1, #0x3, [W14]
+00096A  370009     BRA .L9
+285:                       }
+286:               
+287:                       else if ( adc_conv_data <= ( ONE_HUNDREDTH_VOLT - 1 ) )
+00096C  78001E     MOV [W14], W0
+00096E  500FE2     SUB W0, #0x2, [W15]
+000970  3E0006     BRA GTU, .L9
+288:                       {
+289:                           appData.adthous++ ;
+000972  2080E0     MOV #0x80E, W0
+000974  784010     MOV.B [W0], W0
+000976  E84080     INC.B W0, W1
+000978  2080E0     MOV #0x80E, W0
+00097A  784801     MOV.B W1, [W0]
+290:                           adc_conv_data -- ;
+00097C  E90F1E     DEC [W14], [W14]
+291:                       }
+292:                   }
+293:               
+294:                   appData.adones += 0x30 ;
+000984  2080B0     MOV #0x80B, W0
+000986  784010     MOV.B [W0], W0
+000988  B3C302     MOV.B #0x30, W2
+00098A  404082     ADD.B W0, W2, W1
+00098C  2080B0     MOV #0x80B, W0
+00098E  784801     MOV.B W1, [W0]
+295:                   appData.adtens += 0x30 ;
+000990  2080C0     MOV #0x80C, W0
+000992  784010     MOV.B [W0], W0
+000994  B3C302     MOV.B #0x30, W2
+000996  404082     ADD.B W0, W2, W1
+000998  2080C0     MOV #0x80C, W0
+00099A  784801     MOV.B W1, [W0]
+296:                   appData.adhunds += 0x30 ;
+00099C  2080D0     MOV #0x80D, W0
+00099E  784010     MOV.B [W0], W0
+0009A0  B3C302     MOV.B #0x30, W2
+0009A2  404082     ADD.B W0, W2, W1
+0009A4  2080D0     MOV #0x80D, W0
+0009A6  784801     MOV.B W1, [W0]
+297:                   appData.adthous += 0x30 ;
+0009A8  2080E0     MOV #0x80E, W0
+0009AA  784010     MOV.B [W0], W0
+0009AC  B3C302     MOV.B #0x30, W2
+0009AE  404082     ADD.B W0, W2, W1
+0009B0  2080E0     MOV #0x80E, W0
+0009B2  784801     MOV.B W1, [W0]
+298:               }
+0009B4  FA8000     ULNK
+0009B6  060000     RETURN
+299:               
+300:               /*******************************************************************************
+301:               
+302:                 Function:
+303:                  void Hex2Dec ( unsigned char )
+304:               
+305:                 Summary:
+306:                   Explorer 16 Demo Hex to Decimal Conversion File
+307:               
+308:                 Description:
+309:                    This is the file for the Explorer 16 Dem that converts the hexadecimal data
+310:                   into decimal format.
+311:               
+312:                 Precondition:
+313:                   None.
+314:               
+315:                 Parameters:
+316:                   None.
+317:               
+318:                 Returns:
+319:                   None.
+320:               
+321:                 Remarks:
+322:               
+323:                */
+324:               /******************************************************************************/
+325:               
+326:               void Hex2Dec ( unsigned char count )
+327:               {
+0009B8  FA0002     LNK #0x2
+0009BA  784F00     MOV.B W0, [W14]
+328:                   /* reset values */
+329:                   appData.hunds = 0 ;
+0009BC  208070     MOV #0x807, W0
+0009BE  EB4080     CLR.B W1
+0009C0  784801     MOV.B W1, [W0]
+330:                   appData.tens  = 0 ;
+0009C2  208080     MOV #0x808, W0
+0009C4  EB4080     CLR.B W1
+0009C6  784801     MOV.B W1, [W0]
+331:                   appData.ones = 0 ;
+0009C8  208090     MOV #0x809, W0
+0009CA  EB4080     CLR.B W1
+0009CC  784801     MOV.B W1, [W0]
+332:               
+333:                   while ( count >= 10 )
+0009CE  37001E     BRA .L19
+000A0C  78401E     MOV.B [W14], W0
+000A0E  504FE9     SUB.B W0, #0x9, [W15]
+000A10  3EFFDF     BRA GTU, .L22
+334:                   {
+335:               
+336:                       if ( count >= 200 )
+0009D0  B3CC70     MOV.B #0xC7, W0
+0009D2  78409E     MOV.B [W14], W1
+0009D4  50CF80     SUB.B W1, W0, [W15]
+0009D6  360005     BRA LEU, .L20
+337:                       {
+338:                           count -= 200 ;
+0009D8  B3C381     MOV.B #0x38, W1
+0009DA  40CF1E     ADD.B W1, [W14], [W14]
+339:                           appData.hunds = 0x02 ;
+0009DC  208070     MOV #0x807, W0
+0009DE  B3C021     MOV.B #0x2, W1
+0009E0  784801     MOV.B W1, [W0]
+340:                       }
+341:               
+342:                       if (count >= 100)
+0009E2  B3C630     MOV.B #0x63, W0
+0009E4  78409E     MOV.B [W14], W1
+0009E6  50CF80     SUB.B W1, W0, [W15]
+0009E8  360007     BRA LEU, .L21
+343:                       {
+344:                           count -= 100 ;
+0009EA  B3C9C0     MOV.B #0x9C, W0
+0009EC  404F1E     ADD.B W0, [W14], [W14]
+345:                           appData.hunds++ ;
+0009EE  208070     MOV #0x807, W0
+0009F0  784010     MOV.B [W0], W0
+0009F2  E84080     INC.B W0, W1
+0009F4  208070     MOV #0x807, W0
+0009F6  784801     MOV.B W1, [W0]
+346:                       }
+347:               
+348:                       if (count >= 10 )
+0009F8  78401E     MOV.B [W14], W0
+0009FA  504FE9     SUB.B W0, #0x9, [W15]
+0009FC  360007     BRA LEU, .L19
+349:                       {
+350:                           count -= 10 ;
+0009FE  78409E     MOV.B [W14], W1
+000A00  50CF6A     SUB.B W1, #0xA, [W14]
+351:                           appData.tens++ ;
+000A02  208080     MOV #0x808, W0
+000A04  784010     MOV.B [W0], W0
+000A06  E84080     INC.B W0, W1
+000A08  208080     MOV #0x808, W0
+000A0A  784801     MOV.B W1, [W0]
+352:                       }
+353:                   }
+354:               
+355:                   appData.ones = count ;
+000A12  208090     MOV #0x809, W0
+000A14  78481E     MOV.B [W14], [W0]
+356:               }
+000A16  FA8000     ULNK
+000A18  060000     RETURN
+---  C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/bsp/exp16/dspic33fj256gp710a_pim/timer_1ms.c
+1:                 /********************************************************************
+2:                  Software License Agreement:
+3:                 
+4:                  The software supplied herewith by Microchip Technology Incorporated
+5:                  (the "Company") for its PIC(R) Microcontroller is intended and
+6:                  supplied to you, the Company's customer, for use solely and
+7:                  exclusively on Microchip PIC Microcontroller products. The
+8:                  software is owned by the Company and/or its supplier, and is
+9:                  protected under applicable copyright laws. All rights are reserved.
+10:                 Any use in violation of the foregoing restrictions may subject the
+11:                 user to criminal sanctions under applicable laws, as well as to
+12:                 civil liability for the breach of the terms and conditions of this
+13:                 license.
+14:                
+15:                 THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
+16:                 WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
+17:                 TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+18:                 PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
+19:                 IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
+20:                 CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+21:                 *******************************************************************/
+22:                #include <stdbool.h>
+23:                #include <stdint.h>
+24:                #include <stddef.h>
+25:                #include <xc.h>
+26:                #include <string.h>
+27:                #include <timer_1ms.h>
+28:                
+29:                /* Compiler checks and configuration *******************************/
+30:                #ifndef TIMER_MAX_1MS_CLIENTS
+31:                    #define TIMER_MAX_1MS_CLIENTS 1
+32:                #endif
+33:                
+34:                /* Definitions *****************************************************/
+35:                #define STOP_TIMER_IN_IDLE_MODE     0x2000
+36:                #define TIMER_SOURCE_INTERNAL       0x0000
+37:                #define TIMER_SOURCE_EXTERNAL       0x0002
+38:                #define TIMER_ON                    0x8000
+39:                #define GATED_TIME_DISABLED         0x0000
+40:                #define TIMER_16BIT_MODE            0x0000
+41:                
+42:                #define TIMER_PRESCALER_1           0x0000
+43:                #define TIMER_PRESCALER_8           0x0010
+44:                #define TIMER_PRESCALER_64          0x0020
+45:                #define TIMER_PRESCALER_256         0x0030
+46:                #define TIMER_INTERRUPT_PRIORITY    0x0001
+47:                #define TIMER_INTERRUPT_PRIORITY_4  0x0004
+48:                
+49:                /* Type Definitions ************************************************/
+50:                typedef struct
+51:                {
+52:                    TICK_HANDLER handle;
+53:                    uint32_t rate;
+54:                    uint32_t count;
+55:                } TICK_REQUEST;
+56:                
+57:                /* Variables *******************************************************/
+58:                TICK_REQUEST requests[TIMER_MAX_1MS_CLIENTS] ;
+59:                /*********************************************************************
+60:                 * Function: void TIMER_CancelTick(TICK_HANDLER handle)
+61:                 *
+62:                 * Overview: Cancels a tick request.
+63:                 *
+64:                 * PreCondition: None
+65:                 *
+66:                 * Input:  handle - the function that was handling the tick request
+67:                 *
+68:                 * Output: None
+69:                 *
+70:                 ********************************************************************/
+71:                void TIMER_CancelTick ( TICK_HANDLER handle )
+72:                {
+000D82  FA0004     LNK #0x4
+000D84  980710     MOV W0, [W14+2]
+73:                    uint8_t i ;
+74:                
+75:                    for (i = 0 ; i < TIMER_MAX_1MS_CLIENTS ; i++)
+000D86  EB4000     CLR.B W0
+000D88  784F00     MOV.B W0, [W14]
+000D8A  370011     BRA .L2
+000DAC  E84F1E     INC.B [W14], [W14]
+000DAE  78401E     MOV.B [W14], W0
+000DB0  E00400     CP0.B W0
+000DB2  32FFEC     BRA Z, .L4
+76:                    {
+77:                        if (requests[i].handle == handle)
+000D8C  FB801E     ZE [W14], W0
+000D8E  B9006A     MUL.SU W0, #10, W0
+000D90  780080     MOV W0, W1
+000D92  2085C0     MOV #0x85C, W0
+000D94  408000     ADD W1, W0, W0
+000D96  780090     MOV [W0], W1
+000D98  90001E     MOV [W14+2], W0
+000D9A  508F80     SUB W1, W0, [W15]
+000D9C  3A0007     BRA NZ, .L3
+78:                        {
+79:                            requests[i].handle = NULL ;
+000D9E  FB801E     ZE [W14], W0
+000DA0  B9006A     MUL.SU W0, #10, W0
+000DA2  780080     MOV W0, W1
+000DA4  2085C0     MOV #0x85C, W0
+000DA6  408000     ADD W1, W0, W0
+000DA8  EB0080     CLR W1
+000DAA  780801     MOV W1, [W0]
+80:                        }
+81:                    }
+82:                }
+000DB4  FA8000     ULNK
+000DB6  060000     RETURN
+83:                /*********************************************************************
+84:                 * Function: bool TIMER_RequestTick(TICK_HANDLER handle, uint32_t rate)
+85:                 *
+86:                 * Overview: Requests to receive a periodic event.
+87:                 *
+88:                 * PreCondition: None
+89:                 *
+90:                 * Input:  handle - the function that will be called when the time event occurs
+91:                 *         rate - the number of ticks per event.
+92:                 *
+93:                 * Output: bool - true if successful, false if unsuccessful
+94:                 *
+95:                 ********************************************************************/
+96:                bool TIMER_RequestTick ( TICK_HANDLER handle , uint32_t rate )
+97:                {
+000DB8  FA0008     LNK #0x8
+000DBA  980710     MOV W0, [W14+2]
+000DBC  980722     MOV W2, [W14+4]
+000DBE  980733     MOV W3, [W14+6]
+98:                    uint8_t i ;
+99:                
+100:                   for (i = 0 ; i < TIMER_MAX_1MS_CLIENTS ; i++)
+000DC0  EB4000     CLR.B W0
+000DC2  784F00     MOV.B W0, [W14]
+000DC4  370021     BRA .L6
+000E06  E84F1E     INC.B [W14], [W14]
+000E08  78401E     MOV.B [W14], W0
+000E0A  E00400     CP0.B W0
+000E0C  32FFDC     BRA Z, .L9
+101:                   {
+102:                       if (requests[i].handle == NULL)
+000DC6  FB801E     ZE [W14], W0
+000DC8  B9006A     MUL.SU W0, #10, W0
+000DCA  780080     MOV W0, W1
+000DCC  2085C0     MOV #0x85C, W0
+000DCE  408000     ADD W1, W0, W0
+000DD0  780010     MOV [W0], W0
+000DD2  E00000     CP0 W0
+000DD4  3A0018     BRA NZ, .L7
+103:                       {
+104:                           requests[i].handle = handle ;
+000DD6  FB801E     ZE [W14], W0
+000DD8  B9006A     MUL.SU W0, #10, W0
+000DDA  780080     MOV W0, W1
+000DDC  2085C0     MOV #0x85C, W0
+000DDE  408000     ADD W1, W0, W0
+000DE0  90009E     MOV [W14+2], W1
+000DE2  780801     MOV W1, [W0]
+105:                           requests[i].rate = rate ;
+000DE4  FB801E     ZE [W14], W0
+000DE6  B9006A     MUL.SU W0, #10, W0
+000DE8  780080     MOV W0, W1
+000DEA  2085E0     MOV #0x85E, W0
+000DEC  408000     ADD W1, W0, W0
+000DEE  90012E     MOV [W14+4], W2
+000DF0  9001BE     MOV [W14+6], W3
+000DF2  BE8802     MOV.D W2, [W0]
+106:                           requests[i].count = 0 ;
+000DF4  FB801E     ZE [W14], W0
+000DF6  B9006A     MUL.SU W0, #10, W0
+000DF8  780080     MOV W0, W1
+000DFA  208620     MOV #0x862, W0
+000DFC  408100     ADD W1, W0, W2
+000DFE  B80060     MUL.UU W0, #0, W0
+000E00  BE8900     MOV.D W0, [W2]
+107:               
+108:                           return true ;
+000E02  B3C010     MOV.B #0x1, W0
+000E04  370005     BRA .L8
+109:                       }
+110:                   }
+111:               
+112:                   return false ;
+000E0E  EB4000     CLR.B W0
+113:               }
+000E10  FA8000     ULNK
+000E12  060000     RETURN
+114:               /*********************************************************************
+115:                * Function: bool TIMER_SetConfiguration(TIMER_CONFIGURATIONS configuration)
+116:                *
+117:                * Overview: Initializes the timer.
+118:                *
+119:                * PreCondition: None
+120:                *
+121:                * Input:  None
+122:                *
+123:                * Output: bool - true if successful, false if unsuccessful
+124:                *
+125:                ********************************************************************/
+126:               bool TIMER_SetConfiguration ( TIMER_CONFIGURATIONS configuration )
+127:               {
+000E14  FA0002     LNK #0x2
+000E16  780F00     MOV W0, [W14]
+128:                   switch (configuration)
+000E18  78001E     MOV [W14], W0
+000E1A  500FE1     SUB W0, #0x1, [W15]
+000E1C  320017     BRA Z, .L13
+000E1E  500FE1     SUB W0, #0x1, [W15]
+000E20  390003     BRA NC, .L12
+000E22  500FE2     SUB W0, #0x2, [W15]
+000E24  320025     BRA Z, .L14
+000E26  370027     BRA .L16
+129:                   {
+130:                       case TIMER_CONFIGURATION_1MS:
+131:                           memset ( requests , 0 , sizeof (requests ) ) ;
+000E28  2000A2     MOV #0xA, W2
+000E2A  EB0080     CLR W1
+000E2C  2085C0     MOV #0x85C, W0
+000E2E  07FB53     RCALL _memset
+132:               
+133:                           IPC2bits.T3IP = TIMER_INTERRUPT_PRIORITY ;
+000E30  800541     MOV IPC2, W1
+000E32  2FFF80     MOV #0xFFF8, W0
+000E34  608000     AND W1, W0, W0
+000E36  A00000     BSET W0, #0
+000E38  880540     MOV W0, IPC2
+134:                           IFS0bits.T3IF = 0 ;
+000E3A  A90085     BCLR 0x85, #0
+135:               
+136:                           TMR3 = 0 ;
+000E3C  EF210A     CLR TMR3
+137:               
+138:                           PR3 = 2000 ;
+000E3E  207D00     MOV #0x7D0, W0
+000E40  880870     MOV W0, PR3
+139:                           T3CON = TIMER_ON |
+000E42  2A0100     MOV #0xA010, W0
+000E44  880890     MOV W0, T3CON
+140:                                   STOP_TIMER_IN_IDLE_MODE |
+141:                                   TIMER_SOURCE_INTERNAL |
+142:                                   GATED_TIME_DISABLED |
+143:                                   TIMER_16BIT_MODE |
+144:                                   TIMER_PRESCALER_8 ;
+145:               
+146:                           IEC0bits.T3IE = 1 ;
+000E46  A80095     BSET 0x95, #0
+147:               
+148:                           return true ;
+000E48  B3C010     MOV.B #0x1, W0
+000E4A  370016     BRA .L15
+149:               
+150:                       case TIMER_CONFIGURATION_RTCC:
+151:                           memset ( requests , 0 , sizeof (requests ) ) ;
+000E4C  2000A2     MOV #0xA, W2
+000E4E  EB0080     CLR W1
+000E50  2085C0     MOV #0x85C, W0
+000E52  07FB41     RCALL _memset
+152:               
+153:                           IPC0bits.T1IP = TIMER_INTERRUPT_PRIORITY_4 ;
+000E54  800521     MOV IPC0, W1
+000E56  28FFF0     MOV #0x8FFF, W0
+000E58  608000     AND W1, W0, W0
+000E5A  A0E000     BSET W0, #14
+000E5C  880520     MOV W0, IPC0
+154:                           IFS0bits.T1IF = 0 ;
+000E5E  A96084     BCLR IFS0, #3
+155:               
+156:                           TMR1 = 0 ;
+000E60  EF2100     CLR TMR1
+157:               
+158:                           PR1 = 0x8000 ;
+000E62  280000     MOV #0x8000, W0
+000E64  880810     MOV W0, PR1
+159:                           T1CON = TIMER_ON |
+000E66  280020     MOV #0x8002, W0
+000E68  880820     MOV W0, T1CON
+160:                                   TIMER_SOURCE_EXTERNAL |
+161:                                   GATED_TIME_DISABLED |
+162:                                   TIMER_16BIT_MODE |
+163:                                   TIMER_PRESCALER_1 ;
+164:               
+165:                           IEC0bits.T1IE = 1 ;
+000E6A  A86094     BSET IEC0, #3
+166:               
+167:                           return true ;
+000E6C  B3C010     MOV.B #0x1, W0
+000E6E  370004     BRA .L15
+168:               
+169:               
+170:                       case TIMER_CONFIGURATION_OFF:
+171:                           IEC0bits.T3IE = 0 ;
+000E70  A90095     BCLR 0x95, #0
+172:                           return true ;
+000E72  B3C010     MOV.B #0x1, W0
+000E74  370001     BRA .L15
+173:                   }
+174:               
+175:                   return false ;
+000E76  EB4000     CLR.B W0
+176:               }
+000E78  FA8000     ULNK
+000E7A  060000     RETURN
+177:               /****************************************************************************
+178:                 Function:
+179:                   void __attribute__((__interrupt__, auto_psv)) _T3Interrupt(void)
+180:               
+181:                 Description:
+182:                   Timer ISR, used to update application state. If no transfers are pending
+183:                   new input request is scheduled.
+184:                 Precondition:
+185:                   None
+186:               
+187:                 Parameters:
+188:                   None
+189:               
+190:                 Return Values:
+191:                   None
+192:               
+193:                 Remarks:
+194:                   None
+195:                ***************************************************************************/
+196:               void __attribute__ ( ( __interrupt__ , auto_psv ) ) _T3Interrupt ( void )
+197:               {
+000438  F80036     PUSH RCOUNT
+00043A  BE9F80     MOV.D W0, [W15++]
+00043C  BE9F82     MOV.D W2, [W15++]
+00043E  BE9F84     MOV.D W4, [W15++]
+000440  BE9F86     MOV.D W6, [W15++]
+000442  F80034     PUSH PSVPAG
+000444  200000     MOV #0x0, W0
+000446  8801A0     MOV W0, PSVPAG
+000448  FA0002     LNK #0x2
+198:                   uint8_t i ;
+199:               
+200:                   for (i = 0 ; i < TIMER_MAX_1MS_CLIENTS ; i++)
+00044A  EB4000     CLR.B W0
+00044C  784F00     MOV.B W0, [W14]
+00044E  370036     BRA .L18
+0004BA  E84F1E     INC.B [W14], [W14]
+0004BC  78401E     MOV.B [W14], W0
+0004BE  E00400     CP0.B W0
+0004C0  32FFC7     BRA Z, .L20
+201:                   {
+202:                       if (requests[i].handle != NULL)
+000450  FB801E     ZE [W14], W0
+000452  B9006A     MUL.SU W0, #10, W0
+000454  780080     MOV W0, W1
+000456  2085C0     MOV #0x85C, W0
+000458  408000     ADD W1, W0, W0
+00045A  780010     MOV [W0], W0
+00045C  E00000     CP0 W0
+00045E  32002D     BRA Z, .L19
+203:                       {
+204:                           requests[i].count++ ;
+000460  FB811E     ZE [W14], W2
+000462  B9106A     MUL.SU W2, #10, W0
+000464  780000     MOV W0, W0
+000466  4000E6     ADD W0, #0x6, W1
+000468  2085C0     MOV #0x85C, W0
+00046A  408000     ADD W1, W0, W0
+00046C  BE0010     MOV.D [W0], W0
+00046E  400061     ADD W0, #0x1, W0
+000470  4880E0     ADDC W1, #0x0, W1
+000472  B9116A     MUL.SU W2, #10, W2
+000474  780182     MOV W2, W3
+000476  208622     MOV #0x862, W2
+000478  418102     ADD W3, W2, W2
+00047A  BE8900     MOV.D W0, [W2]
+205:               
+206:                           if (requests[i].count == requests[i].rate)
+00047C  FB801E     ZE [W14], W0
+00047E  B9006A     MUL.SU W0, #10, W0
+000480  780000     MOV W0, W0
+000482  4000E6     ADD W0, #0x6, W1
+000484  2085C0     MOV #0x85C, W0
+000486  408000     ADD W1, W0, W0
+000488  BE0110     MOV.D [W0], W2
+00048A  FB801E     ZE [W14], W0
+00048C  B9006A     MUL.SU W0, #10, W0
+00048E  780000     MOV W0, W0
+000490  E88080     INC2 W0, W1
+000492  2085C0     MOV #0x85C, W0
+000494  408000     ADD W1, W0, W0
+000496  BE0010     MOV.D [W0], W0
+000498  510F80     SUB W2, W0, [W15]
+00049A  598F81     SUBB W3, W1, [W15]
+00049C  3A000E     BRA NZ, .L19
+207:                           {
+208:                               requests[i].handle ( ) ;
+00049E  FB801E     ZE [W14], W0
+0004A0  B9006A     MUL.SU W0, #10, W0
+0004A2  780080     MOV W0, W1
+0004A4  2085C0     MOV #0x85C, W0
+0004A6  408000     ADD W1, W0, W0
+0004A8  780010     MOV [W0], W0
+0004AA  010000     CALL W0
+209:                               requests[i].count = 0 ;
+0004AC  FB801E     ZE [W14], W0
+0004AE  B9006A     MUL.SU W0, #10, W0
+0004B0  780080     MOV W0, W1
+0004B2  208620     MOV #0x862, W0
+0004B4  408100     ADD W1, W0, W2
+0004B6  B80060     MUL.UU W0, #0, W0
+0004B8  BE8900     MOV.D W0, [W2]
+210:                           }
+211:                       }
+212:                   }
+213:               
+214:                   IFS0bits.T3IF = 0 ;
+0004C2  A90085     BCLR 0x85, #0
+215:               }
+0004C4  FA8000     ULNK
+0004C6  F90034     POP PSVPAG
+0004C8  BE034F     MOV.D [--W15], W6
+0004CA  BE024F     MOV.D [--W15], W4
+0004CC  BE014F     MOV.D [--W15], W2
+0004CE  BE004F     MOV.D [--W15], W0
+0004D0  F90036     POP RCOUNT
+0004D2  064000     RETFIE
+---  C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/bsp/exp16/dspic33fj256gp710a_pim/leds.c
+1:                 /********************************************************************
+2:                  Software License Agreement:
+3:                 
+4:                  The software supplied herewith by Microchip Technology Incorporated
+5:                  (the "Company") for its PIC(R) Microcontroller is intended and
+6:                  supplied to you, the Company's customer, for use solely and
+7:                  exclusively on Microchip PIC Microcontroller products. The
+8:                  software is owned by the Company and/or its supplier, and is
+9:                  protected under applicable copyright laws. All rights are reserved.
+10:                 Any use in violation of the foregoing restrictions may subject the
+11:                 user to criminal sanctions under applicable laws, as well as to
+12:                 civil liability for the breach of the terms and conditions of this
+13:                 license.
+14:                
+15:                 THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
+16:                 WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
+17:                 TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+18:                 PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
+19:                 IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
+20:                 CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+21:                 *******************************************************************/
+22:                
+23:                #include <xc.h>
+24:                #include <leds.h>
+25:                #include <stdbool.h>
+26:                
+27:                #define LED_D3_LAT      LATAbits.LATA0
+28:                #define LED_D4_LAT      LATAbits.LATA1
+29:                #define LED_D5_LAT      LATAbits.LATA2
+30:                #define LED_D6_LAT      LATAbits.LATA3
+31:                #define LED_D7_LAT      LATAbits.LATA4
+32:                #define LED_D8_LAT      LATAbits.LATA5
+33:                #define LED_D9_LAT      LATAbits.LATA6
+34:                #define LED_D10_LAT     LATAbits.LATA7      //Overlaps with S5
+35:                
+36:                #define LED_D3_TRIS     TRISAbits.TRISA0
+37:                #define LED_D4_TRIS     TRISAbits.TRISA1
+38:                #define LED_D5_TRIS     TRISAbits.TRISA2
+39:                #define LED_D6_TRIS     TRISAbits.TRISA3
+40:                #define LED_D7_TRIS     TRISAbits.TRISA4
+41:                #define LED_D8_TRIS     TRISAbits.TRISA5
+42:                #define LED_D9_TRIS     TRISAbits.TRISA6
+43:                #define LED_D10_TRIS    TRISAbits.TRISA7    //Overlaps with S5
+44:                
+45:                #define LED_ON  1
+46:                #define LED_OFF 0
+47:                
+48:                #define INPUT  1
+49:                #define OUTPUT 0
+50:                /*********************************************************************
+51:                 * Function: void LED_On(LED led);
+52:                 *
+53:                 * Overview: Turns requested LED on
+54:                 *
+55:                 * PreCondition: LED configured via LED_Configure()
+56:                 *
+57:                 * Input: LED led - enumeration of the LEDs available in this
+58:                 *        demo.  They should be meaningful names and not the names of
+59:                 *        the LEDs on the silkscreen on the board (as the demo code may
+60:                 *        be ported to other boards).
+61:                 *         i.e. - LED_On(LED_CONNECTION_DETECTED);
+62:                 *
+63:                 * Output: none
+64:                 *
+65:                 ********************************************************************/
+66:                void LED_On ( LED led )
+67:                {
+0004E4  FA0002     LNK #0x2
+0004E6  780F00     MOV W0, [W14]
+68:                    switch (led)
+0004E8  78001E     MOV [W14], W0
+0004EA  500FE4     SUB W0, #0x4, [W15]
+0004EC  32001A     BRA Z, .L7
+0004EE  500FE4     SUB W0, #0x4, [W15]
+0004F0  3E0009     BRA GTU, .L12
+0004F2  500FE1     SUB W0, #0x1, [W15]
+0004F4  320010     BRA Z, .L4
+0004F6  500FE1     SUB W0, #0x1, [W15]
+0004F8  39001E     BRA NC, .L13
+0004FA  500FE2     SUB W0, #0x2, [W15]
+0004FC  32000E     BRA Z, .L5
+0004FE  500FE3     SUB W0, #0x3, [W15]
+000500  32000E     BRA Z, .L6
+000502  37001A     BRA .L1
+000504  500FE6     SUB W0, #0x6, [W15]
+000506  320011     BRA Z, .L9
+000508  500FE6     SUB W0, #0x6, [W15]
+00050A  39000D     BRA NC, .L8
+00050C  500FE7     SUB W0, #0x7, [W15]
+00050E  32000F     BRA Z, .L10
+000510  500FE8     SUB W0, #0x8, [W15]
+000512  32000F     BRA Z, .L11
+000514  370011     BRA .L1
+69:                    {
+70:                        case LED_D3:
+71:                            LED_D3_LAT = LED_ON ;
+000516  A802C4     BSET LATA, #0
+72:                            break ;
+000518  37000F     BRA .L1
+73:                
+74:                        case LED_D4:
+75:                            LED_D4_LAT = LED_ON ;
+00051A  A822C4     BSET LATA, #1
+76:                            break ;
+00051C  37000D     BRA .L1
+77:                
+78:                        case LED_D5:
+79:                            LED_D5_LAT = LED_ON ;
+00051E  A842C4     BSET LATA, #2
+80:                            break ;
+000520  37000B     BRA .L1
+81:                
+82:                        case LED_D6:
+83:                            LED_D6_LAT = LED_ON ;
+000522  A862C4     BSET LATA, #3
+84:                            break ;
+000524  370009     BRA .L1
+85:                
+86:                        case LED_D7:
+87:                            LED_D7_LAT = LED_ON ;
+000526  A882C4     BSET LATA, #4
+88:                            break ;
+000528  370007     BRA .L1
+89:                
+90:                        case LED_D8:
+91:                            LED_D8_LAT = LED_ON ;
+00052A  A8A2C4     BSET LATA, #5
+92:                            break ;
+00052C  370005     BRA .L1
+93:                
+94:                        case LED_D9:
+95:                            LED_D9_LAT = LED_ON ;
+00052E  A8C2C4     BSET LATA, #6
+96:                            break ;
+000530  370003     BRA .L1
+97:                
+98:                        case LED_D10:
+99:                            LED_D10_LAT = LED_ON ;
+000532  A8E2C4     BSET LATA, #7
+100:                           break ;
+000534  370001     BRA .L1
+101:               
+102:                       case LED_NONE:
+103:                           break ;
+000536  000000     NOP
+104:                   }
+105:               }
+000538  FA8000     ULNK
+00053A  060000     RETURN
+106:               /*********************************************************************
+107:                * Function: void LED_Off(LED led);
+108:                *
+109:                * Overview: Turns requested LED off
+110:                *
+111:                * PreCondition: LED configured via LEDConfigure()
+112:                *
+113:                * Input: LED led - enumeration of the LEDs available in this
+114:                *        demo.  They should be meaningful names and not the names of
+115:                *        the LEDs on the silkscreen on the board (as the demo code may
+116:                *        be ported to other boards).
+117:                *         i.e. - LED_Off(LED_CONNECTION_DETECTED);
+118:                *
+119:                * Output: none
+120:                *
+121:                ********************************************************************/
+122:               void LED_Off ( LED led )
+123:               {
+00053C  FA0002     LNK #0x2
+00053E  780F00     MOV W0, [W14]
+124:                   switch (led)
+000540  78001E     MOV [W14], W0
+000542  500FE4     SUB W0, #0x4, [W15]
+000544  32001A     BRA Z, .L20
+000546  500FE4     SUB W0, #0x4, [W15]
+000548  3E0009     BRA GTU, .L25
+00054A  500FE1     SUB W0, #0x1, [W15]
+00054C  320010     BRA Z, .L17
+00054E  500FE1     SUB W0, #0x1, [W15]
+000550  39001E     BRA NC, .L26
+000552  500FE2     SUB W0, #0x2, [W15]
+000554  32000E     BRA Z, .L18
+000556  500FE3     SUB W0, #0x3, [W15]
+000558  32000E     BRA Z, .L19
+00055A  37001A     BRA .L14
+00055C  500FE6     SUB W0, #0x6, [W15]
+00055E  320011     BRA Z, .L22
+000560  500FE6     SUB W0, #0x6, [W15]
+000562  39000D     BRA NC, .L21
+000564  500FE7     SUB W0, #0x7, [W15]
+000566  32000F     BRA Z, .L23
+000568  500FE8     SUB W0, #0x8, [W15]
+00056A  32000F     BRA Z, .L24
+00056C  370011     BRA .L14
+125:                   {
+126:                       case LED_D3:
+127:                           LED_D3_LAT = LED_OFF ;
+00056E  A902C4     BCLR LATA, #0
+128:                           break ;
+000570  37000F     BRA .L14
+129:               
+130:                       case LED_D4:
+131:                           LED_D4_LAT = LED_OFF ;
+000572  A922C4     BCLR LATA, #1
+132:                           break ;
+000574  37000D     BRA .L14
+133:               
+134:                       case LED_D5:
+135:                           LED_D5_LAT = LED_OFF ;
+000576  A942C4     BCLR LATA, #2
+136:                           break ;
+000578  37000B     BRA .L14
+137:               
+138:                       case LED_D6:
+139:                           LED_D6_LAT = LED_OFF ;
+00057A  A962C4     BCLR LATA, #3
+140:                           break ;
+00057C  370009     BRA .L14
+141:               
+142:                       case LED_D7:
+143:                           LED_D7_LAT = LED_OFF ;
+00057E  A982C4     BCLR LATA, #4
+144:                           break ;
+000580  370007     BRA .L14
+145:               
+146:                       case LED_D8:
+147:                           LED_D8_LAT = LED_OFF ;
+000582  A9A2C4     BCLR LATA, #5
+148:                           break ;
+000584  370005     BRA .L14
+149:               
+150:                       case LED_D9:
+151:                           LED_D9_LAT = LED_OFF ;
+000586  A9C2C4     BCLR LATA, #6
+152:                           break ;
+000588  370003     BRA .L14
+153:               
+154:                       case LED_D10:
+155:                           LED_D10_LAT = LED_OFF ;
+00058A  A9E2C4     BCLR LATA, #7
+156:                           break ;
+00058C  370001     BRA .L14
+157:               
+158:                       case LED_NONE:
+159:                           break ;
+00058E  000000     NOP
+160:                   }
+161:               }
+000590  FA8000     ULNK
+000592  060000     RETURN
+162:               /*********************************************************************
+163:                * Function: void LED_Toggle(LED led);
+164:                *
+165:                * Overview: Toggles the state of the requested LED
+166:                *
+167:                * PreCondition: LED configured via LEDConfigure()
+168:                *
+169:                * Input: LED led - enumeration of the LEDs available in this
+170:                *        demo.  They should be meaningful names and not the names of
+171:                *        the LEDs on the silkscreen on the board (as the demo code may
+172:                *        be ported to other boards).
+173:                *         i.e. - LED_Toggle(LED_CONNECTION_DETECTED);
+174:                *
+175:                * Output: none
+176:                *
+177:                ********************************************************************/
+178:               void LED_Toggle ( LED led )
+179:               {
+000594  FA0002     LNK #0x2
+000596  780F00     MOV W0, [W14]
+180:                   switch (led)
+000598  78001E     MOV [W14], W0
+00059A  500FE4     SUB W0, #0x4, [W15]
+00059C  32003D     BRA Z, .L33
+00059E  500FE4     SUB W0, #0x4, [W15]
+0005A0  3E0009     BRA GTU, .L38
+0005A2  500FE1     SUB W0, #0x1, [W15]
+0005A4  320010     BRA Z, .L30
+0005A6  500FE1     SUB W0, #0x1, [W15]
+0005A8  39007D     BRA NC, .L39
+0005AA  500FE2     SUB W0, #0x2, [W15]
+0005AC  320019     BRA Z, .L31
+0005AE  500FE3     SUB W0, #0x3, [W15]
+0005B0  320025     BRA Z, .L32
+0005B2  370079     BRA .L27
+0005B4  500FE6     SUB W0, #0x6, [W15]
+0005B6  32004C     BRA Z, .L35
+0005B8  500FE6     SUB W0, #0x6, [W15]
+0005BA  39003C     BRA NC, .L34
+0005BC  500FE7     SUB W0, #0x7, [W15]
+0005BE  320056     BRA Z, .L36
+0005C0  500FE8     SUB W0, #0x8, [W15]
+0005C2  320062     BRA Z, .L37
+0005C4  370070     BRA .L27
+181:                   {
+182:                       case LED_D3:
+183:                           LED_D3_LAT ^= 1 ;
+0005C6  801620     MOV LATA, W0
+0005C8  784000     MOV.B W0, W0
+0005CA  604061     AND.B W0, #0x1, W0
+0005CC  A20400     BTG.B W0, #0
+0005CE  604061     AND.B W0, #0x1, W0
+0005D0  FB8000     ZE W0, W0
+0005D2  600061     AND W0, #0x1, W0
+0005D4  801622     MOV LATA, W2
+0005D6  2FFFE1     MOV #0xFFFE, W1
+0005D8  610081     AND W2, W1, W1
+0005DA  700001     IOR W0, W1, W0
+0005DC  881620     MOV W0, LATA
+184:                           break ;
+0005DE  370063     BRA .L27
+185:               
+186:                       case LED_D4:
+187:                           LED_D4_LAT ^= 1 ;
+0005E0  801620     MOV LATA, W0
+0005E2  D10000     LSR W0, W0
+0005E4  604061     AND.B W0, #0x1, W0
+0005E6  A20400     BTG.B W0, #0
+0005E8  604061     AND.B W0, #0x1, W0
+0005EA  FB8000     ZE W0, W0
+0005EC  600061     AND W0, #0x1, W0
+0005EE  400000     ADD W0, W0, W0
+0005F0  801622     MOV LATA, W2
+0005F2  2FFFD1     MOV #0xFFFD, W1
+0005F4  610081     AND W2, W1, W1
+0005F6  700001     IOR W0, W1, W0
+0005F8  881620     MOV W0, LATA
+188:                           break ;
+0005FA  370055     BRA .L27
+189:               
+190:                       case LED_D5:
+191:                           LED_D5_LAT ^= 1 ;
+0005FC  801620     MOV LATA, W0
+0005FE  DE0042     LSR W0, #2, W0
+000600  604061     AND.B W0, #0x1, W0
+000602  A20400     BTG.B W0, #0
+000604  604061     AND.B W0, #0x1, W0
+000606  FB8000     ZE W0, W0
+000608  600061     AND W0, #0x1, W0
+00060A  DD0042     SL W0, #2, W0
+00060C  801622     MOV LATA, W2
+00060E  2FFFB1     MOV #0xFFFB, W1
+000610  610081     AND W2, W1, W1
+000612  700001     IOR W0, W1, W0
+000614  881620     MOV W0, LATA
+192:                           break ;
+000616  370047     BRA .L27
+193:               
+194:                       case LED_D6:
+195:                           LED_D6_LAT ^= 1 ;
+000618  801620     MOV LATA, W0
+00061A  DE0043     LSR W0, #3, W0
+00061C  604061     AND.B W0, #0x1, W0
+00061E  A20400     BTG.B W0, #0
+000620  604061     AND.B W0, #0x1, W0
+000622  FB8000     ZE W0, W0
+000624  600061     AND W0, #0x1, W0
+000626  DD0043     SL W0, #3, W0
+000628  801622     MOV LATA, W2
+00062A  2FFF71     MOV #0xFFF7, W1
+00062C  610081     AND W2, W1, W1
+00062E  700001     IOR W0, W1, W0
+000630  881620     MOV W0, LATA
+196:                           break ;
+000632  370039     BRA .L27
+197:               
+198:                       case LED_D7:
+199:                           LED_D7_LAT ^= 1 ;
+000634  801620     MOV LATA, W0
+000636  DE0044     LSR W0, #4, W0
+000638  604061     AND.B W0, #0x1, W0
+00063A  A20400     BTG.B W0, #0
+00063C  604061     AND.B W0, #0x1, W0
+00063E  FB8000     ZE W0, W0
+000640  600061     AND W0, #0x1, W0
+000642  DD0044     SL W0, #4, W0
+000644  801622     MOV LATA, W2
+000646  2FFEF1     MOV #0xFFEF, W1
+000648  610081     AND W2, W1, W1
+00064A  700001     IOR W0, W1, W0
+00064C  881620     MOV W0, LATA
+200:                           break ;
+00064E  37002B     BRA .L27
+201:               
+202:                       case LED_D8:
+203:                           LED_D8_LAT ^= 1 ;
+000650  801620     MOV LATA, W0
+000652  DE0045     LSR W0, #5, W0
+000654  604061     AND.B W0, #0x1, W0
+000656  A20400     BTG.B W0, #0
+000658  604061     AND.B W0, #0x1, W0
+00065A  FB8000     ZE W0, W0
+00065C  600061     AND W0, #0x1, W0
+00065E  DD0045     SL W0, #5, W0
+000660  801622     MOV LATA, W2
+000662  2FFDF1     MOV #0xFFDF, W1
+000664  610081     AND W2, W1, W1
+000666  700001     IOR W0, W1, W0
+000668  881620     MOV W0, LATA
+204:                           break ;
+00066A  37001D     BRA .L27
+205:               
+206:                       case LED_D9:
+207:                           LED_D9_LAT ^= 1 ;
+00066C  801620     MOV LATA, W0
+00066E  DE0046     LSR W0, #6, W0
+000670  604061     AND.B W0, #0x1, W0
+000672  A20400     BTG.B W0, #0
+000674  604061     AND.B W0, #0x1, W0
+000676  FB8000     ZE W0, W0
+000678  600061     AND W0, #0x1, W0
+00067A  DD0046     SL W0, #6, W0
+00067C  801622     MOV LATA, W2
+00067E  2FFBF1     MOV #0xFFBF, W1
+000680  610081     AND W2, W1, W1
+000682  700001     IOR W0, W1, W0
+000684  881620     MOV W0, LATA
+208:                           break ;
+000686  37000F     BRA .L27
+209:               
+210:                       case LED_D10:
+211:                           LED_D10_LAT ^= 1 ;
+000688  801620     MOV LATA, W0
+00068A  DE0047     LSR W0, #7, W0
+00068C  604061     AND.B W0, #0x1, W0
+00068E  A20400     BTG.B W0, #0
+000690  604061     AND.B W0, #0x1, W0
+000692  FB8000     ZE W0, W0
+000694  600061     AND W0, #0x1, W0
+000696  DD0047     SL W0, #7, W0
+000698  801622     MOV LATA, W2
+00069A  2FF7F1     MOV #0xFF7F, W1
+00069C  610081     AND W2, W1, W1
+00069E  700001     IOR W0, W1, W0
+0006A0  881620     MOV W0, LATA
+212:                           break ;
+0006A2  370001     BRA .L27
+213:               
+214:                       case LED_NONE:
+215:                           break ;
+0006A4  000000     NOP
+216:                   }
+217:               }
+0006A6  FA8000     ULNK
+0006A8  060000     RETURN
+218:               /*********************************************************************
+219:                * Function: bool LED_Get(LED led);
+220:                *
+221:                * Overview: Returns the current state of the requested LED
+222:                *
+223:                * PreCondition: LED configured via LEDConfigure()
+224:                *
+225:                * Input: LED led - enumeration of the LEDs available in this
+226:                *        demo.  They should be meaningful names and not the names of
+227:                *        the LEDs on the silkscreen on the board (as the demo code may
+228:                *        be ported to other boards).
+229:                *         i.e. - LED_Get(LED_CONNECTION_DETECTED);
+230:                *
+231:                * Output: true if on, false if off
+232:                *
+233:                ********************************************************************/
+234:               bool LED_Get ( LED led )
+235:               {
+0006AA  FA0002     LNK #0x2
+0006AC  780F00     MOV W0, [W14]
+236:                   switch (led)
+0006AE  78001E     MOV [W14], W0
+0006B0  500FE4     SUB W0, #0x4, [W15]
+0006B2  32002C     BRA Z, .L46
+0006B4  500FE4     SUB W0, #0x4, [W15]
+0006B6  3E0009     BRA GTU, .L51
+0006B8  500FE1     SUB W0, #0x1, [W15]
+0006BA  320010     BRA Z, .L43
+0006BC  500FE1     SUB W0, #0x1, [W15]
+0006BE  390051     BRA NC, .L42
+0006C0  500FE2     SUB W0, #0x2, [W15]
+0006C2  320014     BRA Z, .L44
+0006C4  500FE3     SUB W0, #0x3, [W15]
+0006C6  32001A     BRA Z, .L45
+0006C8  37004E     BRA .L41
+0006CA  500FE6     SUB W0, #0x6, [W15]
+0006CC  32002F     BRA Z, .L48
+0006CE  500FE6     SUB W0, #0x6, [W15]
+0006D0  390025     BRA NC, .L47
+0006D2  500FE7     SUB W0, #0x7, [W15]
+0006D4  320034     BRA Z, .L49
+0006D6  500FE8     SUB W0, #0x8, [W15]
+0006D8  32003B     BRA Z, .L50
+0006DA  370045     BRA .L41
+237:                   {
+238:                       case LED_D3:
+239:                           return ( ( LED_D3_LAT == LED_ON ) ? true : false ) ;
+0006DC  801620     MOV LATA, W0
+0006DE  600061     AND W0, #0x1, W0
+0006E0  A7F000     BTSC W0, #15
+0006E2  EA0000     NEG W0, W0
+0006E4  EA0000     NEG W0, W0
+0006E6  DE004F     LSR W0, #15, W0
+0006E8  784000     MOV.B W0, W0
+0006EA  37003E     BRA .L52
+240:               
+241:                       case LED_D4:
+242:                           return ( ( LED_D4_LAT == LED_ON ) ? true : false ) ;
+0006EC  801620     MOV LATA, W0
+0006EE  600062     AND W0, #0x2, W0
+0006F0  A7F000     BTSC W0, #15
+0006F2  EA0000     NEG W0, W0
+0006F4  EA0000     NEG W0, W0
+0006F6  DE004F     LSR W0, #15, W0
+0006F8  784000     MOV.B W0, W0
+0006FA  370036     BRA .L52
+243:               
+244:                       case LED_D5:
+245:                           return ( ( LED_D5_LAT == LED_ON ) ? true : false ) ;
+0006FC  801620     MOV LATA, W0
+0006FE  600064     AND W0, #0x4, W0
+000700  A7F000     BTSC W0, #15
+000702  EA0000     NEG W0, W0
+000704  EA0000     NEG W0, W0
+000706  DE004F     LSR W0, #15, W0
+000708  784000     MOV.B W0, W0
+00070A  37002E     BRA .L52
+246:               
+247:                       case LED_D6:
+248:                           return ( ( LED_D6_LAT == LED_ON ) ? true : false ) ;
+00070C  801620     MOV LATA, W0
+00070E  600068     AND W0, #0x8, W0
+000710  A7F000     BTSC W0, #15
+000712  EA0000     NEG W0, W0
+000714  EA0000     NEG W0, W0
+000716  DE004F     LSR W0, #15, W0
+000718  784000     MOV.B W0, W0
+00071A  370026     BRA .L52
+249:               
+250:                       case LED_D7:
+251:                           return ( ( LED_D7_LAT == LED_ON ) ? true : false ) ;
+00071C  801620     MOV LATA, W0
+00071E  600070     AND W0, #0x10, W0
+000720  A7F000     BTSC W0, #15
+000722  EA0000     NEG W0, W0
+000724  EA0000     NEG W0, W0
+000726  DE004F     LSR W0, #15, W0
+000728  784000     MOV.B W0, W0
+00072A  37001E     BRA .L52
+252:               
+253:                       case LED_D8:
+254:                           return ( ( LED_D8_LAT == LED_ON ) ? true : false ) ;
+00072C  801621     MOV LATA, W1
+00072E  200200     MOV #0x20, W0
+000730  608000     AND W1, W0, W0
+000732  A7F000     BTSC W0, #15
+000734  EA0000     NEG W0, W0
+000736  EA0000     NEG W0, W0
+000738  DE004F     LSR W0, #15, W0
+00073A  784000     MOV.B W0, W0
+00073C  370015     BRA .L52
+255:               
+256:                       case LED_D9:
+257:                           return ( ( LED_D9_LAT == LED_ON ) ? true : false ) ;
+00073E  801621     MOV LATA, W1
+000740  200400     MOV #0x40, W0
+000742  608000     AND W1, W0, W0
+000744  A7F000     BTSC W0, #15
+000746  EA0000     NEG W0, W0
+000748  EA0000     NEG W0, W0
+00074A  DE004F     LSR W0, #15, W0
+00074C  784000     MOV.B W0, W0
+00074E  37000C     BRA .L52
+258:               
+259:                       case LED_D10:
+260:                           return ( ( LED_D10_LAT == LED_ON ) ? true : false ) ;
+000750  801621     MOV LATA, W1
+000752  200800     MOV #0x80, W0
+000754  608000     AND W1, W0, W0
+000756  A7F000     BTSC W0, #15
+000758  EA0000     NEG W0, W0
+00075A  EA0000     NEG W0, W0
+00075C  DE004F     LSR W0, #15, W0
+00075E  784000     MOV.B W0, W0
+000760  370003     BRA .L52
+261:               
+262:                       case LED_NONE:
+263:                           return false ;
+000762  EB4000     CLR.B W0
+000764  370001     BRA .L52
+264:               
+265:                   }
+266:                   return false ;
+000766  EB4000     CLR.B W0
+267:               }
+000768  FA8000     ULNK
+00076A  060000     RETURN
+268:               /*********************************************************************
+269:                * Function: void LED_Enable(LED led);
+270:                *
+271:                * Overview: Configures the LED for use by the other LED API
+272:                *
+273:                * PreCondition: none
+274:                *
+275:                * Input: LED led - enumeration of the LEDs available in this
+276:                *        demo.  They should be meaningful names and not the names of
+277:                *        the LEDs on the silkscreen on the board (as the demo code may
+278:                *        be ported to other boards).
+279:                *
+280:                * Output: none
+281:                *
+282:                ********************************************************************/
+283:               void LED_Enable ( LED led )
+284:               {
+00076C  FA0002     LNK #0x2
+00076E  780F00     MOV W0, [W14]
+285:                   switch (led)
+000770  78001E     MOV [W14], W0
+000772  500FE4     SUB W0, #0x4, [W15]
+000774  32001A     BRA Z, .L59
+000776  500FE4     SUB W0, #0x4, [W15]
+000778  3E0009     BRA GTU, .L64
+00077A  500FE1     SUB W0, #0x1, [W15]
+00077C  320010     BRA Z, .L56
+00077E  500FE1     SUB W0, #0x1, [W15]
+000780  39001E     BRA NC, .L65
+000782  500FE2     SUB W0, #0x2, [W15]
+000784  32000E     BRA Z, .L57
+000786  500FE3     SUB W0, #0x3, [W15]
+000788  32000E     BRA Z, .L58
+00078A  37001A     BRA .L53
+00078C  500FE6     SUB W0, #0x6, [W15]
+00078E  320011     BRA Z, .L61
+000790  500FE6     SUB W0, #0x6, [W15]
+000792  39000D     BRA NC, .L60
+000794  500FE7     SUB W0, #0x7, [W15]
+000796  32000F     BRA Z, .L62
+000798  500FE8     SUB W0, #0x8, [W15]
+00079A  32000F     BRA Z, .L63
+00079C  370011     BRA .L53
+286:                   {
+287:                       case LED_D3:
+288:                           LED_D3_TRIS = OUTPUT ;
+00079E  A902C0     BCLR TRISA, #0
+289:                           break ;
+0007A0  37000F     BRA .L53
+290:               
+291:                       case LED_D4:
+292:                           LED_D4_TRIS = OUTPUT ;
+0007A2  A922C0     BCLR TRISA, #1
+293:                           break ;
+0007A4  37000D     BRA .L53
+294:               
+295:                       case LED_D5:
+296:                           LED_D5_TRIS = OUTPUT ;
+0007A6  A942C0     BCLR TRISA, #2
+297:                           break ;
+0007A8  37000B     BRA .L53
+298:               
+299:                       case LED_D6:
+300:                           LED_D6_TRIS = OUTPUT ;
+0007AA  A962C0     BCLR TRISA, #3
+301:                           break ;
+0007AC  370009     BRA .L53
+302:               
+303:                       case LED_D7:
+304:                           LED_D7_TRIS = OUTPUT ;
+0007AE  A982C0     BCLR TRISA, #4
+305:                           break ;
+0007B0  370007     BRA .L53
+306:               
+307:                       case LED_D8:
+308:                           LED_D8_TRIS = OUTPUT ;
+0007B2  A9A2C0     BCLR TRISA, #5
+309:                           break ;
+0007B4  370005     BRA .L53
+310:               
+311:                       case LED_D9:
+312:                           LED_D9_TRIS = OUTPUT ;
+0007B6  A9C2C0     BCLR TRISA, #6
+313:                           break ;
+0007B8  370003     BRA .L53
+314:               
+315:                       case LED_D10:
+316:                           LED_D10_TRIS = OUTPUT ;
+0007BA  A9E2C0     BCLR TRISA, #7
+317:                           break ;
+0007BC  370001     BRA .L53
+318:               
+319:                       case LED_NONE:
+320:                           break ;
+0007BE  000000     NOP
+321:                   }
+322:               }
+0007C0  FA8000     ULNK
+0007C2  060000     RETURN
+323:               
+---  C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/bsp/exp16/dspic33fj256gp710a_pim/lcd.c
+1:                 /******************************************************************************
+2:                 Software License Agreement
+3:                 
+4:                 The software supplied herewith by Microchip Technology Incorporated
+5:                 (the "Company") for its PIC(R) Microcontroller is intended and
+6:                 supplied to you, the Company's customer, for use solely and
+7:                 exclusively on Microchip PICmicro Microcontroller products. The
+8:                 software is owned by the Company and/or its supplier, and is
+9:                 protected under applicable copyright laws. All rights are reserved.
+10:                Any use in violation of the foregoing restrictions may subject the
+11:                user to criminal sanctions under applicable laws, as well as to
+12:                civil liability for the breach of the terms and conditions of this
+13:                license.
+14:                
+15:                THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
+16:                WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
+17:                TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+18:                PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
+19:                IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
+20:                CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+21:                 *******************************************************************************/
+22:                
+23:                #include <xc.h>
+24:                #include <lcd.h>
+25:                #include <stdint.h>
+26:                
+27:                /* Private Definitions ***********************************************/
+28:                // Define a fast instruction execution time in terms of loop time
+29:                // typically > 43us
+30:                #define LCD_F_INSTR         1000
+31:                
+32:                // Define a slow instruction execution time in terms of loop time
+33:                // typically > 1.35ms
+34:                #define LCD_S_INSTR         3000
+35:                
+36:                // Define the startup time for the LCD in terms of loop time
+37:                // typically > 30ms
+38:                #define LCD_STARTUP         20000
+39:                
+40:                #define LCD_MAX_COLUMN      16
+41:                
+42:                #define LCD_COMMAND_CLEAR_SCREEN        0x01
+43:                #define LCD_COMMAND_RETURN_HOME         0x02
+44:                #define LCD_COMMAND_ENTER_DATA_MODE     0x06
+45:                #define LCD_COMMAND_CURSOR_OFF          0x0C
+46:                #define LCD_COMMAND_CURSOR_ON           0x0F
+47:                #define LCD_COMMAND_MOVE_CURSOR_LEFT    0x10
+48:                #define LCD_COMMAND_MOVE_CURSOR_RIGHT   0x14
+49:                #define LCD_COMMAND_SET_MODE_8_BIT      0x38
+50:                #define LCD_COMMAND_ROW_0_HOME          0x80
+51:                #define LCD_COMMAND_ROW_1_HOME          0xC0
+52:                
+53:                #define LCD_DATA_LAT                   LATE
+54:                #define LCD_DATA_TRIS                  TRISE
+55:                #define LCD_RSSignal_Set()        LATBbits.LATB15 = 1 //set Register Select bit
+56:                #define LCD_RSSignal_Clear()      LATBbits.LATB15 = 0 //clear Register Select bit
+57:                #define LCD_RWSignal_Set()        LATDbits.LATD5 = 1  //set Read/Write bit
+58:                #define LCD_RWSignal_Clear()      LATDbits.LATD5 = 0  //clear Read/Write bit
+59:                #define LCD_EnableSignal_Set()    LATDbits.LATD4 = 1  //set Enable bit
+60:                #define LCD_EnableSignal_Clear()  LATDbits.LATD4 = 0  //clear Enable bit
+61:                #define LCD_RSSignal_Input()      TRISBbits.TRISB15 = 1 //set Register Select bit
+62:                #define LCD_RSSignal_Output()     TRISBbits.TRISB15 = 0 //clear Register Select bit
+63:                #define LCD_RWSignal_Input()      TRISDbits.TRISD5 = 1  //set Read/Write bit
+64:                #define LCD_RWSignal_Output()     TRISDbits.TRISD5 = 0  //clear Read/Write bit
+65:                #define LCD_EnableSignal_Input()  TRISDbits.TRISD4 = 1  //set Enable bit
+66:                #define LCD_EnableSignal_Output() TRISDbits.TRISD4 = 0  //clear Enable bit
+67:                
+68:                /* Private Functions *************************************************/
+69:                static void LCD_CarriageReturn ( void ) ;
+70:                static void LCD_ShiftCursorLeft ( void ) ;
+71:                static void LCD_ShiftCursorRight ( void ) ;
+72:                static void LCD_ShiftCursorUp ( void ) ;
+73:                static void LCD_ShiftCursorDown ( void ) ;
+74:                static void LCD_Wait ( unsigned int ) ;
+75:                static void LCD_SendData ( char ) ;
+76:                static void LCD_SendCommand ( char , unsigned int ) ;
+77:                
+78:                /* Private variables ************************************************/
+79:                static uint8_t row ;
+80:                static uint8_t column ;
+81:                /*********************************************************************
+82:                 * Function: bool LCD_Initialize(void);
+83:                 *
+84:                 * Overview: Initializes the LCD screen.  Can take several hundred
+85:                 *           milliseconds.
+86:                 *
+87:                 * PreCondition: none
+88:                 *
+89:                 * Input: None
+90:                 *
+91:                 * Output: true if initialized, false otherwise
+92:                 *
+93:                 ********************************************************************/
+94:                bool LCD_Initialize ( void )
+95:                {
+000A1A  FA0000     LNK #0x0
+96:                    LCD_DATA_LAT &= 0xFF00 ;
+000A1C  8016E1     MOV LATE, W1
+000A1E  2FF000     MOV #0xFF00, W0
+000A20  608000     AND W1, W0, W0
+000A22  8816E0     MOV W0, LATE
+97:                    LCD_DATA_TRIS &= 0xFF00 ;
+000A24  8016C1     MOV TRISE, W1
+000A26  2FF000     MOV #0xFF00, W0
+000A28  608000     AND W1, W0, W0
+000A2A  8816C0     MOV W0, TRISE
+98:                
+99:                    // Control signal data pins
+100:                   LCD_RWSignal_Clear ( ) ; // LCD R/W signal
+000A2C  A9A2D6     BCLR LATD, #5
+101:                   LCD_RSSignal_Clear ( ) ; // LCD RS signal
+000A2E  A9E2CB     BCLR 0x2CB, #7
+102:                   LCD_EnableSignal_Clear ( ) ;     // LCD E signal
+000A30  A982D6     BCLR LATD, #4
+103:               
+104:                   // Control signal pin direction
+105:                   LCD_RSSignal_Output ( )  ;
+000A32  A9E2C7     BCLR 0x2C7, #7
+106:                   LCD_RWSignal_Output ( )  ;
+000A34  A9A2D2     BCLR TRISD, #5
+107:                   LCD_EnableSignal_Output ( ) ;
+000A36  A982D2     BCLR TRISD, #4
+108:               
+109:                   LCD_EnableSignal_Set ( )  ;
+000A38  A882D6     BSET LATD, #4
+110:                   LCD_Wait ( LCD_STARTUP ) ;
+000A3A  24E200     MOV #0x4E20, W0
+000A3C  0700C9     RCALL LCD_Wait
+111:                   LCD_Wait ( LCD_STARTUP ) ;
+000A3E  24E200     MOV #0x4E20, W0
+000A40  0700C7     RCALL LCD_Wait
+112:               
+113:                   LCD_SendCommand ( LCD_COMMAND_SET_MODE_8_BIT ,     LCD_F_INSTR + LCD_STARTUP ) ;
+000A42  252081     MOV #0x5208, W1
+000A44  B3C380     MOV.B #0x38, W0
+000A46  0700F1     RCALL LCD_SendCommand
+114:                   LCD_SendCommand ( LCD_COMMAND_CURSOR_OFF ,         LCD_F_INSTR ) ;
+000A48  203E81     MOV #0x3E8, W1
+000A4A  B3C0C0     MOV.B #0xC, W0
+000A4C  0700EE     RCALL LCD_SendCommand
+115:                   LCD_SendCommand ( LCD_COMMAND_ENTER_DATA_MODE ,    LCD_S_INSTR ) ;
+000A4E  20BB81     MOV #0xBB8, W1
+000A50  B3C060     MOV.B #0x6, W0
+000A52  0700EB     RCALL LCD_SendCommand
+116:               
+117:                   LCD_ClearScreen ( ) ;
+000A54  070052     RCALL LCD_ClearScreen
+118:               
+119:                   return true ;
+000A56  B3C010     MOV.B #0x1, W0
+120:               }
+000A58  FA8000     ULNK
+000A5A  060000     RETURN
+121:               /*********************************************************************
+122:                * Function: void LCD_PutString(char* inputString, uint16_t length);
+123:                *
+124:                * Overview: Puts a string on the LCD screen.  Unsupported characters will be
+125:                *           discarded.  May block or throw away characters is LCD is not ready
+126:                *           or buffer space is not available.  Will terminate when either a
+127:                *           null terminator character (0x00) is reached or the length number
+128:                *           of characters is printed, which ever comes first.
+129:                *
+130:                * PreCondition: already initialized via LCD_Initialize()
+131:                *
+132:                * Input: char* - string to print
+133:                *        uint16_t - length of string to print
+134:                *
+135:                * Output: None
+136:                *
+137:                ********************************************************************/
+138:               void LCD_PutString ( char* inputString , uint16_t length )
+139:               {
+000A5C  FA0004     LNK #0x4
+000A5E  780F00     MOV W0, [W14]
+000A60  980711     MOV W1, [W14+2]
+140:                   while (length--)
+000A62  37000A     BRA .L3
+000A78  90001E     MOV [W14+2], W0
+000A7A  A7F000     BTSC W0, #15
+000A7C  EA0000     NEG W0, W0
+000A7E  EA0000     NEG W0, W0
+000A80  DE004F     LSR W0, #15, W0
+000A82  784000     MOV.B W0, W0
+000A84  90009E     MOV [W14+2], W1
+000A86  E90081     DEC W1, W1
+000A88  980711     MOV W1, [W14+2]
+000A8A  E00400     CP0.B W0
+000A8C  3AFFEB     BRA NZ, .L7
+000A8E  370001     BRA .L2
+141:                   {
+142:                       switch (*inputString)
+000A64  78001E     MOV [W14], W0
+000A66  784010     MOV.B [W0], W0
+000A68  FB0000     SE W0, W0
+000A6A  E00000     CP0 W0
+000A6C  320011     BRA Z, .L8
+143:                       {
+144:                           case 0x00:
+145:                               return ;
+000A90  000000     NOP
+146:               
+147:                           default:
+148:                               LCD_PutChar ( *inputString++ ) ;
+000A6E  78001E     MOV [W14], W0
+000A70  784010     MOV.B [W0], W0
+000A72  E80F1E     INC [W14], [W14]
+000A74  070010     RCALL LCD_PutChar
+149:                               break ;
+000A76  000000     NOP
+150:                       }
+151:                   }
+152:               }
+000A92  FA8000     ULNK
+000A94  060000     RETURN
+153:               /*********************************************************************
+154:                * Function: void LCD_PutChar(char);
+155:                *
+156:                * Overview: Puts a character on the LCD screen.  Unsupported characters will be
+157:                *           discarded.  May block or throw away characters is LCD is not ready
+158:                *           or buffer space is not available.
+159:                *
+160:                * PreCondition: already initialized via LCD_Initialize()
+161:                *
+162:                * Input: char - character to print
+163:                *
+164:                * Output: None
+165:                *
+166:                ********************************************************************/
+167:               void LCD_PutChar ( char inputCharacter )
+168:               {
+000A96  FA0002     LNK #0x2
+000A98  784F00     MOV.B W0, [W14]
+169:                   switch (inputCharacter)
+000A9A  FB001E     SE [W14], W0
+000A9C  500FEA     SUB W0, #0xA, [W15]
+000A9E  320007     BRA Z, .L12
+000AA0  500FED     SUB W0, #0xD, [W15]
+000AA2  320003     BRA Z, .L13
+000AA4  500FE8     SUB W0, #0x8, [W15]
+000AA6  32000A     BRA Z, .L11
+000AA8  37000E     BRA .L19
+170:                   {
+171:                       case '\r':
+172:                           LCD_CarriageReturn ( ) ;
+000AAA  070032     RCALL LCD_CarriageReturn
+173:                           break ;
+000AAC  370024     BRA .L9
+174:               
+175:                       case '\n':
+176:                           if (row == 0)
+000AAE  BFC800     MOV.B row, WREG
+000AB0  E00400     CP0.B W0
+000AB2  3A0002     BRA NZ, .L15
+177:                           {
+178:                               LCD_ShiftCursorDown ( ) ;
+000AB4  070082     RCALL LCD_ShiftCursorDown
+179:                           }
+180:                           else
+181:                           {
+182:                               LCD_ShiftCursorUp ( ) ;
+000AB8  070075     RCALL LCD_ShiftCursorUp
+183:                           }
+184:                           break ;
+000AB6  37001F     BRA .L9
+000ABA  37001D     BRA .L9
+185:               
+186:                       case '\b':
+187:                           LCD_ShiftCursorLeft ( ) ;
+000ABC  070037     RCALL LCD_ShiftCursorLeft
+188:                           LCD_PutChar ( ' ' ) ;
+000ABE  B3C200     MOV.B #0x20, W0
+000AC0  07FFEA     RCALL LCD_PutChar
+189:                           LCD_ShiftCursorLeft ( ) ;
+000AC2  070034     RCALL LCD_ShiftCursorLeft
+190:                           break ;
+000AC4  370018     BRA .L9
+191:               
+192:                       default:
+193:                           LCD_SendData ( inputCharacter ) ;
+000AC6  78401E     MOV.B [W14], W0
+000AC8  07009A     RCALL LCD_SendData
+194:                           column++ ;
+000ACA  BFC801     MOV.B column, WREG
+000ACC  E84000     INC.B W0, W0
+000ACE  B7E801     MOV.B WREG, column
+195:               
+196:                           if (column == LCD_MAX_COLUMN)
+000AD0  BFC801     MOV.B column, WREG
+000AD2  504FF0     SUB.B W0, #0x10, [W15]
+000AD4  3A000F     BRA NZ, .L20
+197:                           {
+198:                               column = 0 ;
+000AD6  EF6801     CLR.B column
+199:                               if (row == 0)
+000AD8  BFC800     MOV.B row, WREG
+000ADA  E00400     CP0.B W0
+000ADC  3A0006     BRA NZ, .L18
+200:                               {
+201:                                   LCD_SendCommand ( LCD_COMMAND_ROW_1_HOME , LCD_S_INSTR ) ;
+000ADE  20BB81     MOV #0xBB8, W1
+000AE0  B3CC00     MOV.B #0xC0, W0
+000AE2  0700A3     RCALL LCD_SendCommand
+202:                                   row = 1 ;
+000AE4  B3C010     MOV.B #0x1, W0
+000AE6  B7E800     MOV.B WREG, row
+203:                               }
+204:                               else
+205:                               {
+206:                                   LCD_SendCommand ( LCD_COMMAND_ROW_0_HOME , LCD_S_INSTR ) ;
+000AEA  20BB81     MOV #0xBB8, W1
+000AEC  B3C800     MOV.B #0x80, W0
+000AEE  07009D     RCALL LCD_SendCommand
+207:                                   row = 0 ;
+000AF0  EF6800     CLR.B row
+208:                               }
+209:                           }
+210:                           break ;
+000AE8  370006     BRA .L9
+000AF2  370001     BRA .L9
+000AF4  000000     NOP
+211:                   }
+212:               }
+000AF6  FA8000     ULNK
+000AF8  060000     RETURN
+213:               /*********************************************************************
+214:                * Function: void LCD_ClearScreen(void);
+215:                *
+216:                * Overview: Clears the screen, if possible.
+217:                *
+218:                * PreCondition: already initialized via LCD_Initialize()
+219:                *
+220:                * Input: None
+221:                *
+222:                * Output: None
+223:                *
+224:                ********************************************************************/
+225:               void LCD_ClearScreen ( void )
+226:               {
+000AFA  FA0000     LNK #0x0
+227:                   LCD_SendCommand ( LCD_COMMAND_CLEAR_SCREEN , LCD_S_INSTR ) ;
+000AFC  20BB81     MOV #0xBB8, W1
+000AFE  B3C010     MOV.B #0x1, W0
+000B00  070094     RCALL LCD_SendCommand
+228:                   LCD_SendCommand ( LCD_COMMAND_RETURN_HOME ,  LCD_S_INSTR ) ;
+000B02  20BB81     MOV #0xBB8, W1
+000B04  B3C020     MOV.B #0x2, W0
+000B06  070091     RCALL LCD_SendCommand
+229:               
+230:                   row = 0 ;
+000B08  EF6800     CLR.B row
+231:                   column = 0 ;
+000B0A  EF6801     CLR.B column
+232:               }
+000B0C  FA8000     ULNK
+000B0E  060000     RETURN
+233:               
+234:               
+235:               /*******************************************************************/
+236:               /*******************************************************************/
+237:               /* Private Functions ***********************************************/
+238:               /*******************************************************************/
+239:               /*******************************************************************/
+240:               /*********************************************************************
+241:                * Function: static void LCD_CarriageReturn(void)
+242:                *
+243:                * Overview: Handles a carriage return
+244:                *
+245:                * PreCondition: already initialized via LCD_Initialize()
+246:                *
+247:                * Input: None
+248:                *
+249:                * Output: None
+250:                *
+251:                ********************************************************************/
+252:               static void LCD_CarriageReturn ( void )
+253:               {
+000B10  FA0000     LNK #0x0
+254:                   if (row == 0)
+000B12  BFC800     MOV.B row, WREG
+000B14  E00400     CP0.B W0
+000B16  3A0004     BRA NZ, .L23
+255:                   {
+256:                       LCD_SendCommand ( LCD_COMMAND_ROW_0_HOME , LCD_S_INSTR ) ;
+000B18  20BB81     MOV #0xBB8, W1
+000B1A  B3C800     MOV.B #0x80, W0
+000B1C  070086     RCALL LCD_SendCommand
+000B1E  370003     BRA .L24
+257:                   }
+258:                   else
+259:                   {
+260:                       LCD_SendCommand ( LCD_COMMAND_ROW_1_HOME , LCD_S_INSTR ) ;
+000B20  20BB81     MOV #0xBB8, W1
+000B22  B3CC00     MOV.B #0xC0, W0
+000B24  070082     RCALL LCD_SendCommand
+261:                   }
+262:                   column = 0 ;
+000B26  EF6801     CLR.B column
+263:               }
+000B28  FA8000     ULNK
+000B2A  060000     RETURN
+264:               /*********************************************************************
+265:                * Function: static void LCD_ShiftCursorLeft(void)
+266:                *
+267:                * Overview: Shifts cursor left one spot (wrapping if required)
+268:                *
+269:                * PreCondition: already initialized via LCD_Initialize()
+270:                *
+271:                * Input: None
+272:                *
+273:                * Output: None
+274:                *
+275:                ********************************************************************/
+276:               static void LCD_ShiftCursorLeft ( void )
+277:               {
+000B2C  FA0002     LNK #0x2
+278:                   uint8_t i ;
+279:               
+280:                   if (column == 0)
+000B2E  BFC801     MOV.B column, WREG
+000B30  E00400     CP0.B W0
+000B32  3A0016     BRA NZ, .L26
+281:                   {
+282:                       if (row == 0)
+000B34  BFC800     MOV.B row, WREG
+000B36  E00400     CP0.B W0
+000B38  3A0006     BRA NZ, .L27
+283:                       {
+284:                           LCD_SendCommand ( LCD_COMMAND_ROW_1_HOME , LCD_S_INSTR ) ;
+000B3A  20BB81     MOV #0xBB8, W1
+000B3C  B3CC00     MOV.B #0xC0, W0
+000B3E  070075     RCALL LCD_SendCommand
+285:                           row = 1 ;
+000B40  B3C010     MOV.B #0x1, W0
+000B42  B7E800     MOV.B WREG, row
+000B44  370004     BRA .L28
+286:                       }
+287:                       else
+288:                       {
+289:                           LCD_SendCommand ( LCD_COMMAND_ROW_0_HOME , LCD_S_INSTR ) ;
+000B46  20BB81     MOV #0xBB8, W1
+000B48  B3C800     MOV.B #0x80, W0
+000B4A  07006F     RCALL LCD_SendCommand
+290:                           row = 0 ;
+000B4C  EF6800     CLR.B row
+291:                       }
+292:               
+293:                       //Now shift to the end of the row
+294:                       for (i = 0 ; i < ( LCD_MAX_COLUMN - 1 ) ; i++)
+000B4E  EB4000     CLR.B W0
+000B50  784F00     MOV.B W0, [W14]
+000B52  370002     BRA .L29
+000B56  E84F1E     INC.B [W14], [W14]
+000B58  78401E     MOV.B [W14], W0
+000B5A  504FEE     SUB.B W0, #0xE, [W15]
+000B5C  36FFFB     BRA LEU, .L30
+000B5E  370006     BRA .L25
+295:                       {
+296:                           LCD_ShiftCursorRight ( ) ;
+000B54  07000D     RCALL LCD_ShiftCursorRight
+297:                       }
+298:                   }
+299:                   else
+300:                   {
+301:                       column-- ;
+000B60  BFC801     MOV.B column, WREG
+000B62  E94000     DEC.B W0, W0
+000B64  B7E801     MOV.B WREG, column
+302:                       LCD_SendCommand ( LCD_COMMAND_MOVE_CURSOR_LEFT , LCD_F_INSTR ) ;
+000B66  203E81     MOV #0x3E8, W1
+000B68  B3C100     MOV.B #0x10, W0
+000B6A  07005F     RCALL LCD_SendCommand
+303:                   }
+304:               }
+000B6C  FA8000     ULNK
+000B6E  060000     RETURN
+305:               /*********************************************************************
+306:                * Function: static void LCD_ShiftCursorRight(void)
+307:                *
+308:                * Overview: Shifts cursor right one spot (wrapping if required)
+309:                *
+310:                * PreCondition: already initialized via LCD_Initialize()
+311:                *
+312:                * Input: None
+313:                *
+314:                * Output: None
+315:                *
+316:                ********************************************************************/
+317:               static void LCD_ShiftCursorRight ( void )
+318:               {
+000B70  FA0000     LNK #0x0
+319:                   LCD_SendCommand ( LCD_COMMAND_MOVE_CURSOR_RIGHT , LCD_F_INSTR ) ;
+000B72  203E81     MOV #0x3E8, W1
+000B74  B3C140     MOV.B #0x14, W0
+000B76  070059     RCALL LCD_SendCommand
+320:                   column++ ;
+000B78  BFC801     MOV.B column, WREG
+000B7A  E84000     INC.B W0, W0
+000B7C  B7E801     MOV.B WREG, column
+321:               
+322:                   if (column == LCD_MAX_COLUMN)
+000B7E  BFC801     MOV.B column, WREG
+000B80  504FF0     SUB.B W0, #0x10, [W15]
+000B82  3A000E     BRA NZ, .L32
+323:                   {
+324:                       column = 0 ;
+000B84  EF6801     CLR.B column
+325:                       if (row == 0)
+000B86  BFC800     MOV.B row, WREG
+000B88  E00400     CP0.B W0
+000B8A  3A0006     BRA NZ, .L34
+326:                       {
+327:                           LCD_SendCommand ( LCD_COMMAND_ROW_1_HOME , LCD_S_INSTR ) ;
+000B8C  20BB81     MOV #0xBB8, W1
+000B8E  B3CC00     MOV.B #0xC0, W0
+000B90  07004C     RCALL LCD_SendCommand
+328:                           row = 1 ;
+000B92  B3C010     MOV.B #0x1, W0
+000B94  B7E800     MOV.B WREG, row
+000B96  370004     BRA .L32
+329:                       }
+330:                       else
+331:                       {
+332:                           LCD_SendCommand ( LCD_COMMAND_ROW_0_HOME , LCD_S_INSTR ) ;
+000B98  20BB81     MOV #0xBB8, W1
+000B9A  B3C800     MOV.B #0x80, W0
+000B9C  070046     RCALL LCD_SendCommand
+333:                           row = 0 ;
+000B9E  EF6800     CLR.B row
+334:                       }
+335:                   }
+336:               }
+000BA0  FA8000     ULNK
+000BA2  060000     RETURN
+337:               /*********************************************************************
+338:                * Function: static void LCD_ShiftCursorUp(void)
+339:                *
+340:                * Overview: Shifts cursor up one spot (wrapping if required)
+341:                *
+342:                * PreCondition: already initialized via LCD_Initialize()
+343:                *
+344:                * Input: None
+345:                *
+346:                * Output: None
+347:                *
+348:                ********************************************************************/
+349:               static void LCD_ShiftCursorUp ( void )
+350:               {
+000BA4  FA0002     LNK #0x2
+351:                   uint8_t i ;
+352:               
+353:                   for (i = 0 ; i < LCD_MAX_COLUMN ; i++)
+000BA6  EB4000     CLR.B W0
+000BA8  784F00     MOV.B W0, [W14]
+000BAA  370002     BRA .L36
+000BAE  E84F1E     INC.B [W14], [W14]
+000BB0  78401E     MOV.B [W14], W0
+000BB2  504FEF     SUB.B W0, #0xF, [W15]
+000BB4  36FFFB     BRA LEU, .L37
+354:                   {
+355:                       LCD_ShiftCursorLeft ( ) ;
+000BAC  07FFBF     RCALL LCD_ShiftCursorLeft
+356:                   }
+357:               }
+000BB6  FA8000     ULNK
+000BB8  060000     RETURN
+358:               /*********************************************************************
+359:                * Function: static void LCD_ShiftCursorDown(void)
+360:                *
+361:                * Overview: Shifts cursor down one spot (wrapping if required)
+362:                *
+363:                * PreCondition: already initialized via LCD_Initialize()
+364:                *
+365:                * Input: None
+366:                *
+367:                * Output: None
+368:                *
+369:                ********************************************************************/
+370:               static void LCD_ShiftCursorDown ( void )
+371:               {
+000BBA  FA0002     LNK #0x2
+372:                   uint8_t i ;
+373:               
+374:                   for (i = 0 ; i < LCD_MAX_COLUMN ; i++)
+000BBC  EB4000     CLR.B W0
+000BBE  784F00     MOV.B W0, [W14]
+000BC0  370002     BRA .L39
+000BC4  E84F1E     INC.B [W14], [W14]
+000BC6  78401E     MOV.B [W14], W0
+000BC8  504FEF     SUB.B W0, #0xF, [W15]
+000BCA  36FFFB     BRA LEU, .L40
+375:                   {
+376:                       LCD_ShiftCursorRight ( ) ;
+000BC2  07FFD6     RCALL LCD_ShiftCursorRight
+377:                   }
+378:               }
+000BCC  FA8000     ULNK
+000BCE  060000     RETURN
+379:               /*********************************************************************
+380:                * Function: static void LCD_Wait(unsigned int B)
+381:                *
+382:                * Overview: A crude wait function that just cycle burns
+383:                *
+384:                * PreCondition: None
+385:                *
+386:                * Input: unsigned int - artibrary delay time based on loop counts.
+387:                *
+388:                * Output: None
+389:                *
+390:                ********************************************************************/
+391:               static void LCD_Wait ( unsigned int delay )
+392:               {
+000BD0  FA0002     LNK #0x2
+000BD2  780F00     MOV W0, [W14]
+393:                   while (delay)
+000BD4  370001     BRA .L42
+000BD8  78001E     MOV [W14], W0
+000BDA  E00000     CP0 W0
+000BDC  3AFFFC     BRA NZ, .L43
+394:                   {
+395:                       delay-- ;
+000BD6  E90F1E     DEC [W14], [W14]
+396:                   }
+397:               }
+000BDE  FA8000     ULNK
+000BE0  060000     RETURN
+398:               /*********************************************************************
+399:                * Function: void LCD_CursorEnable(bool enable)
+400:                *
+401:                * Overview: Enables/disables the cursor
+402:                *
+403:                * PreCondition: None
+404:                *
+405:                * Input: bool - specifies if the cursor should be on or off
+406:                *
+407:                * Output: None
+408:                *
+409:                ********************************************************************/
+410:               void LCD_CursorEnable ( bool enable )
+411:               {
+000BE2  FA0002     LNK #0x2
+000BE4  784F00     MOV.B W0, [W14]
+412:                   if (enable == true)
+000BE6  78401E     MOV.B [W14], W0
+000BE8  E00400     CP0.B W0
+000BEA  320004     BRA Z, .L45
+413:                   {
+414:                       LCD_SendCommand ( LCD_COMMAND_CURSOR_ON , LCD_S_INSTR ) ;
+000BEC  20BB81     MOV #0xBB8, W1
+000BEE  B3C0F0     MOV.B #0xF, W0
+000BF0  07001C     RCALL LCD_SendCommand
+000BF2  370003     BRA .L44
+415:                   }
+416:                   else
+417:                   {
+418:                       LCD_SendCommand ( LCD_COMMAND_CURSOR_OFF , LCD_S_INSTR ) ;
+000BF4  20BB81     MOV #0xBB8, W1
+000BF6  B3C0C0     MOV.B #0xC, W0
+000BF8  070018     RCALL LCD_SendCommand
+419:                   }
+420:               }
+000BFA  FA8000     ULNK
+000BFC  060000     RETURN
+421:               /*********************************************************************
+422:                * Function: static void LCD_SendData(char data)
+423:                *
+424:                * Overview: Sends data to LCD
+425:                *
+426:                * PreCondition: None
+427:                *
+428:                * Input: char - contains the data to be sent to the LCD
+429:                *
+430:                * Output: None
+431:                *
+432:                ********************************************************************/
+433:               static void LCD_SendData ( char data )
+434:               {
+000BFE  FA0002     LNK #0x2
+000C00  784F00     MOV.B W0, [W14]
+435:                   LCD_RWSignal_Clear ( ) ;
+000C02  A9A2D6     BCLR LATD, #5
+436:                   LCD_RSSignal_Set ( ) ;
+000C04  A8E2CB     BSET 0x2CB, #7
+437:                   LCD_DATA_LAT &= 0xFF00 ;
+000C06  8016E1     MOV LATE, W1
+000C08  2FF000     MOV #0xFF00, W0
+000C0A  608000     AND W1, W0, W0
+000C0C  8816E0     MOV W0, LATE
+438:                   LCD_DATA_LAT |= data ;
+000C0E  FB009E     SE [W14], W1
+000C10  8016E0     MOV LATE, W0
+000C12  700001     IOR W0, W1, W0
+000C14  8816E0     MOV W0, LATE
+439:                   LCD_EnableSignal_Set ( ) ;
+000C16  A882D6     BSET LATD, #4
+440:                   Nop ( ) ;
+000C18  000000     NOP
+441:                   Nop ( ) ;
+000C1A  000000     NOP
+442:                   Nop ( ) ;
+000C1C  000000     NOP
+443:                   LCD_EnableSignal_Clear ( ) ;
+000C1E  A982D6     BCLR LATD, #4
+444:                   LCD_RSSignal_Clear ( ) ;
+000C20  A9E2CB     BCLR 0x2CB, #7
+445:                   LCD_Wait ( LCD_F_INSTR ) ;
+000C22  203E80     MOV #0x3E8, W0
+000C24  07FFD5     RCALL LCD_Wait
+446:               }
+000C26  FA8000     ULNK
+000C28  060000     RETURN
+447:               /*********************************************************************
+448:                * Function: static void LCD_SendCommand(char data)
+449:                *
+450:                * Overview: Sends command to LCD
+451:                *
+452:                * PreCondition: None
+453:                *
+454:                * Input: char - contains the command to be sent to the LCD
+455:                *        unsigned int - has the specific delay for the command
+456:                *
+457:                * Output: None
+458:                *
+459:                ********************************************************************/
+460:               static void LCD_SendCommand ( char command , unsigned int delay )
+461:               {
+000C2A  FA0004     LNK #0x4
+000C2C  784F00     MOV.B W0, [W14]
+000C2E  980711     MOV W1, [W14+2]
+462:                   LCD_DATA_LAT &= 0xFF00 ;
+000C30  8016E1     MOV LATE, W1
+000C32  2FF000     MOV #0xFF00, W0
+000C34  608000     AND W1, W0, W0
+000C36  8816E0     MOV W0, LATE
+463:                   LCD_DATA_LAT |= command ;
+000C38  FB009E     SE [W14], W1
+000C3A  8016E0     MOV LATE, W0
+000C3C  700001     IOR W0, W1, W0
+000C3E  8816E0     MOV W0, LATE
+464:                   LCD_RWSignal_Clear ( ) ;
+000C40  A9A2D6     BCLR LATD, #5
+465:                   LCD_RSSignal_Clear ( ) ;
+000C42  A9E2CB     BCLR 0x2CB, #7
+466:                   LCD_EnableSignal_Set ( ) ;
+000C44  A882D6     BSET LATD, #4
+467:                   Nop ( ) ;
+000C46  000000     NOP
+468:                   Nop ( ) ;
+000C48  000000     NOP
+469:                   Nop ( ) ;
+000C4A  000000     NOP
+470:                   LCD_EnableSignal_Clear ( ) ;
+000C4C  A982D6     BCLR LATD, #4
+471:                   LCD_EnableSignal_Clear ( ) ;
+000C4E  A982D6     BCLR LATD, #4
+472:                   LCD_Wait ( delay ) ;
+000C50  90001E     MOV [W14+2], W0
+000C52  07FFBE     RCALL LCD_Wait
+473:               }
+000C54  FA8000     ULNK
+000C56  060000     RETURN
+474:               
+---  C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/bsp/exp16/dspic33fj256gp710a_pim/buttons.c
+1:                 /********************************************************************
+2:                  Software License Agreement:
+3:                 
+4:                  The software supplied herewith by Microchip Technology Incorporated
+5:                  (the "Company") for its PIC(R) Microcontroller is intended and
+6:                  supplied to you, the Company's customer, for use solely and
+7:                  exclusively on Microchip PIC Microcontroller products. The
+8:                  software is owned by the Company and/or its supplier, and is
+9:                  protected under applicable copyright laws. All rights are reserved.
+10:                 Any use in violation of the foregoing restrictions may subject the
+11:                 user to criminal sanctions under applicable laws, as well as to
+12:                 civil liability for the breach of the terms and conditions of this
+13:                 license.
+14:                
+15:                 THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
+16:                 WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
+17:                 TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+18:                 PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
+19:                 IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
+20:                 CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+21:                 *******************************************************************/
+22:                
+23:                #include <xc.h>
+24:                #include <stdbool.h>
+25:                #include <buttons.h>
+26:                
+27:                /*** Button Definitions *********************************************/
+28:                //      S1  is MCLR button
+29:                #define S3_PORT  PORTDbits.RD6
+30:                #define S6_PORT  PORTDbits.RD7
+31:                #define S5_PORT  PORTAbits.RA7       //Overlaps with D10
+32:                #define S4_PORT  PORTDbits.RD13
+33:                
+34:                #define S3_TRIS  TRISDbits.TRISD6
+35:                #define S6_TRIS  TRISDbits.TRISD7
+36:                #define S5_TRIS  TRISAbits.TRISA7
+37:                #define S4_TRIS  TRISDbits.TRISD13
+38:                
+39:                #define BUTTON_PRESSED      0
+40:                #define BUTTON_NOT_PRESSED  1
+41:                
+42:                #define PIN_INPUT           1
+43:                #define PIN_OUTPUT          0
+44:                /*********************************************************************
+45:                 * Function: bool BUTTON_IsPressed(BUTTON button);
+46:                 *
+47:                 * Overview: Returns the current state of the requested button
+48:                 *
+49:                 * PreCondition: button configured via BUTTON_SetConfiguration()
+50:                 *
+51:                 * Input: BUTTON button - enumeration of the buttons available in
+52:                 *        this demo.  They should be meaningful names and not the names
+53:                 *        of the buttons on the silkscreen on the board (as the demo
+54:                 *        code may be ported to other boards).
+55:                 *         i.e. - ButtonIsPressed(BUTTON_SEND_MESSAGE);
+56:                 *
+57:                 * Output: TRUE if pressed; FALSE if not pressed.
+58:                 *
+59:                 ********************************************************************/
+60:                bool BUTTON_IsPressed ( BUTTON button )
+61:                {
+000E7C  FA0002     LNK #0x2
+000E7E  780F00     MOV W0, [W14]
+62:                    switch (button)
+000E80  78001E     MOV [W14], W0
+000E82  500FE2     SUB W0, #0x2, [W15]
+000E84  320015     BRA Z, .L5
+000E86  500FE2     SUB W0, #0x2, [W15]
+000E88  3E0005     BRA GTU, .L8
+000E8A  E00000     CP0 W0
+000E8C  32002C     BRA Z, .L3
+000E8E  500FE1     SUB W0, #0x1, [W15]
+000E90  320006     BRA Z, .L4
+000E92  37002B     BRA .L2
+000E94  500FE3     SUB W0, #0x3, [W15]
+000E96  320015     BRA Z, .L6
+000E98  500FE4     SUB W0, #0x4, [W15]
+000E9A  32001C     BRA Z, .L7
+000E9C  370026     BRA .L2
+63:                    {
+64:                        case BUTTON_S3:
+65:                            return ( ( S3_PORT == BUTTON_PRESSED ) ? true : false ) ;
+000E9E  8016A1     MOV PORTD, W1
+000EA0  200400     MOV #0x40, W0
+000EA2  608000     AND W1, W0, W0
+000EA4  A7F000     BTSC W0, #15
+000EA6  EA0000     NEG W0, W0
+000EA8  E90000     DEC W0, W0
+000EAA  DE004F     LSR W0, #15, W0
+000EAC  784000     MOV.B W0, W0
+000EAE  37001E     BRA .L9
+66:                
+67:                        case BUTTON_S6:
+68:                            return ( ( S6_PORT == BUTTON_PRESSED ) ? true : false ) ;
+000EB0  8016A1     MOV PORTD, W1
+000EB2  200800     MOV #0x80, W0
+000EB4  608000     AND W1, W0, W0
+000EB6  A7F000     BTSC W0, #15
+000EB8  EA0000     NEG W0, W0
+000EBA  E90000     DEC W0, W0
+000EBC  DE004F     LSR W0, #15, W0
+000EBE  784000     MOV.B W0, W0
+000EC0  370015     BRA .L9
+69:                
+70:                        case BUTTON_S5:
+71:                            return ( ( S5_PORT == BUTTON_PRESSED ) ? true : false ) ;
+000EC2  801611     MOV PORTA, W1
+000EC4  200800     MOV #0x80, W0
+000EC6  608000     AND W1, W0, W0
+000EC8  A7F000     BTSC W0, #15
+000ECA  EA0000     NEG W0, W0
+000ECC  E90000     DEC W0, W0
+000ECE  DE004F     LSR W0, #15, W0
+000ED0  784000     MOV.B W0, W0
+000ED2  37000C     BRA .L9
+72:                
+73:                        case BUTTON_S4:
+74:                            return ( ( S4_PORT == BUTTON_PRESSED ) ? true : false ) ;
+000ED4  8016A1     MOV PORTD, W1
+000ED6  220000     MOV #0x2000, W0
+000ED8  608000     AND W1, W0, W0
+000EDA  A7F000     BTSC W0, #15
+000EDC  EA0000     NEG W0, W0
+000EDE  E90000     DEC W0, W0
+000EE0  DE004F     LSR W0, #15, W0
+000EE2  784000     MOV.B W0, W0
+000EE4  370003     BRA .L9
+75:                
+76:                        case BUTTON_DISABLED:
+77:                            return false ;
+000EE6  EB4000     CLR.B W0
+000EE8  370001     BRA .L9
+78:                    }
+79:                
+80:                    return false ;
+000EEA  EB4000     CLR.B W0
+81:                }
+000EEC  FA8000     ULNK
+000EEE  060000     RETURN
+82:                /*********************************************************************
+83:                 * Function: void BUTTON_Enable(BUTTON button);
+84:                 *
+85:                 * Overview: Returns the current state of the requested button
+86:                 *
+87:                 * PreCondition: button configured via BUTTON_SetConfiguration()
+88:                 *
+89:                 * Input: BUTTON button - enumeration of the buttons available in
+90:                 *        this demo.  They should be meaningful names and not the names
+91:                 *        of the buttons on the silkscreen on the board (as the demo
+92:                 *        code may be ported to other boards).
+93:                 *         i.e. - ButtonIsPressed(BUTTON_SEND_MESSAGE);
+94:                 *
+95:                 * Output: None
+96:                 *
+97:                 ********************************************************************/
+98:                void BUTTON_Enable ( BUTTON button )
+99:                {
+000EF0  FA0002     LNK #0x2
+000EF2  780F00     MOV W0, [W14]
+100:                   switch (button)
+000EF4  78001E     MOV [W14], W0
+000EF6  500FE2     SUB W0, #0x2, [W15]
+000EF8  32000E     BRA Z, .L14
+000EFA  500FE2     SUB W0, #0x2, [W15]
+000EFC  3E0005     BRA GTU, .L17
+000EFE  E00000     CP0 W0
+000F00  320010     BRA Z, .L18
+000F02  500FE1     SUB W0, #0x1, [W15]
+000F04  320006     BRA Z, .L13
+000F06  37000E     BRA .L10
+000F08  500FE3     SUB W0, #0x3, [W15]
+000F0A  320007     BRA Z, .L15
+000F0C  500FE4     SUB W0, #0x4, [W15]
+000F0E  320007     BRA Z, .L16
+000F10  370009     BRA .L10
+101:                   {
+102:                       case BUTTON_S3:
+103:                           S3_TRIS = PIN_INPUT ;
+000F12  A8C2D2     BSET TRISD, #6
+104:                           break ;
+000F14  370007     BRA .L10
+105:               
+106:                       case BUTTON_S6:
+107:                           S6_TRIS = PIN_INPUT ;
+000F16  A8E2D2     BSET TRISD, #7
+108:                           break ;
+000F18  370005     BRA .L10
+109:               
+110:                       case BUTTON_S5:
+111:                           S5_TRIS = PIN_INPUT ;
+000F1A  A8E2C0     BSET TRISA, #7
+112:                           break ;
+000F1C  370003     BRA .L10
+113:               
+114:                       case BUTTON_S4:
+115:                           S4_TRIS = PIN_INPUT ;
+000F1E  A8A2D3     BSET 0x2D3, #5
+116:                           break ;
+000F20  370001     BRA .L10
+117:               
+118:                       case BUTTON_DISABLED:
+119:                           break ;
+000F22  000000     NOP
+120:                   }
+121:               }
+000F24  FA8000     ULNK
+000F26  060000     RETURN
+---  C:/Users/i14746/MPLABXProjects/E16LCDDemo_dspic33fj256gp710a_pim_1.X/bsp/exp16/dspic33fj256gp710a_pim/adc.c
+1:                 /********************************************************************
+2:                  Software License Agreement:
+3:                 
+4:                  The software supplied herewith by Microchip Technology Incorporated
+5:                  (the "Company") for its PIC(R) Microcontroller is intended and
+6:                  supplied to you, the Company's customer, for use solely and
+7:                  exclusively on Microchip PIC Microcontroller products. The
+8:                  software is owned by the Company and/or its supplier, and is
+9:                  protected under applicable copyright laws. All rights are reserved.
+10:                 Any use in violation of the foregoing restrictions may subject the
+11:                 user to criminal sanctions under applicable laws, as well as to
+12:                 civil liability for the breach of the terms and conditions of this
+13:                 license.
+14:                
+15:                 THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
+16:                 WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
+17:                 TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+18:                 PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
+19:                 IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
+20:                 CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
+21:                 *******************************************************************/
+22:                #include <xc.h>
+23:                #include <adc.h>
+24:                #include <stdint.h>
+25:                #include <stdbool.h>
+26:                
+27:                /*********************************************************************
+28:                 * Function: ADC_ReadPercentage(ADC_CHANNEL channel);
+29:                 *
+30:                 * Overview: Reads the requested ADC channel and returns the percentage
+31:                 *            of that conversions result (0-100%).
+32:                 *
+33:                 * PreCondition: channel is configured via the ADCConfigure() function
+34:                 *
+35:                 * Input: ADC_CHANNEL channel - enumeration of the ADC channels
+36:                 *        available in this demo.  They should be meaningful names and
+37:                 *        not the names of the ADC pins on the device (as the demo code
+38:                 *        may be ported to other boards).
+39:                 *         i.e. ADC_ReadPercentage(ADC_CHANNEL_POTENTIOMETER);
+40:                 *
+41:                 * Output: uint8_t indicating the percentage of the result 0-100% or
+42:                 *         0xFF for an error
+43:                 *
+44:                 ********************************************************************/
+45:                uint8_t ADC_ReadPercentage
+46:                ( ADC_CHANNEL channel )
+47:                {
+000C58  FA0004     LNK #0x4
+000C5A  980710     MOV W0, [W14+2]
+48:                    uint8_t percent ;
+49:                
+50:                    switch (channel)
+000C5C  90001E     MOV [W14+2], W0
+000C5E  500FE4     SUB W0, #0x4, [W15]
+000C60  320004     BRA Z, .L8
+000C62  500FE5     SUB W0, #0x5, [W15]
+000C64  320004     BRA Z, .L9
+51:                    {
+52:                        case ADC_CHANNEL_5:
+53:                            break ;
+000C6E  000000     NOP
+54:                        case ADC_CHANNEL_4:
+55:                            break ;
+000C6A  000000     NOP
+000C6C  370001     BRA .L5
+56:                        default:
+57:                            return 0xFF ;
+000C66  EBC000     SETM.B W0
+000C68  370010     BRA .L6
+58:                    }
+59:                
+60:                    //A very crude percentage calculation
+61:                    percent = ( ADC_Read10bit ( channel ) / 10 ) ;
+000C70  90001E     MOV [W14+2], W0
+000C72  07000D     RCALL ADC_Read10bit
+000C74  2CCCD1     MOV #0xCCCD, W1
+000C76  B80001     MUL.UU W0, W1, W0
+000C78  DE0843     LSR W1, #3, W0
+000C7A  784F00     MOV.B W0, [W14]
+62:                
+63:                    if (percent > 100)
+000C7C  B3C640     MOV.B #0x64, W0
+000C7E  78409E     MOV.B [W14], W1
+000C80  50CF80     SUB.B W1, W0, [W15]
+000C82  360002     BRA LEU, .L7
+64:                    {
+65:                        percent = 100 ;
+000C84  B3C640     MOV.B #0x64, W0
+000C86  784F00     MOV.B W0, [W14]
+66:                    }
+67:                    return percent ;
+000C88  78401E     MOV.B [W14], W0
+68:                }
+000C8A  FA8000     ULNK
+000C8C  060000     RETURN
+69:                /*********************************************************************
+70:                 * Function: ADC_Read10bit(ADC_CHANNEL channel);
+71:                 *
+72:                 * Overview: Reads the requested ADC channel and returns the 10-bit
+73:                 *           representation of this data.
+74:                 *
+75:                 * PreCondition: channel is configured via the ADCConfigure() function
+76:                 *
+77:                 * Input: ADC_CHANNEL channel - enumeration of the ADC channels
+78:                 *        available in this demo.  They should be meaningful names and
+79:                 *        not the names of the ADC pins on the device (as the demo code
+80:                 *        may be ported to other boards).
+81:                 *         i.e. - ADCReadPercentage(ADC_CHANNEL_POTENTIOMETER);
+82:                 *
+83:                 * Output: uint16_t the right adjusted 10-bit representation of the ADC
+84:                 *         channel conversion or 0xFFFF for an error.
+85:                 *
+86:                 ********************************************************************/
+87:                uint16_t ADC_Read10bit ( ADC_CHANNEL channel )
+88:                {
+000C8E  FA0004     LNK #0x4
+000C90  980710     MOV W0, [W14+2]
+89:                    uint16_t i ;
+90:                
+91:                    switch (channel)
+000C92  90001E     MOV [W14+2], W0
+000C94  500FE4     SUB W0, #0x4, [W15]
+000C96  320004     BRA Z, .L21
+000C98  500FE5     SUB W0, #0x5, [W15]
+000C9A  320004     BRA Z, .L22
+92:                    {
+93:                        case ADC_CHANNEL_5:
+94:                            break ;
+000CA4  000000     NOP
+95:                
+96:                        case ADC_CHANNEL_4:
+97:                            break ;
+000CA0  000000     NOP
+000CA2  370001     BRA .L14
+98:                
+99:                        default:
+100:                           return 0xFFFF ;
+000C9C  EB8000     SETM W0
+000C9E  37001D     BRA .L15
+101:                   }
+102:               
+103:                   AD1CHS0 = channel ;
+000CA6  90009E     MOV [W14+2], W1
+000CA8  881941     MOV W1, AD1CHS0
+104:               
+105:                   // Get an ADC sample
+106:                   AD1CON1bits.SAMP = 1 ;           //Start sampling
+000CAA  A82320     BSET AD1CON1, #1
+107:                   for (i = 0 ; i < 1000 ; i++) ; //Sample delay, conversion start automatically
+000CAC  EB0000     CLR W0
+000CAE  780F00     MOV W0, [W14]
+000CB0  370001     BRA .L16
+000CB2  E80F1E     INC [W14], [W14]
+000CB4  203E70     MOV #0x3E7, W0
+000CB6  78009E     MOV [W14], W1
+000CB8  508F80     SUB W1, W0, [W15]
+000CBA  36FFFB     BRA LEU, .L17
+108:               
+109:                   AD1CON1bits.SAMP = 0 ;           //Start sampling
+000CBC  A92320     BCLR AD1CON1, #1
+110:                   for (i = 0 ; i < 1000 ; i++) ; //Sample delay, conversion start automatically
+000CBE  EB0000     CLR W0
+000CC0  780F00     MOV W0, [W14]
+000CC2  370001     BRA .L18
+000CC4  E80F1E     INC [W14], [W14]
+000CC6  203E70     MOV #0x3E7, W0
+000CC8  78009E     MOV [W14], W1
+000CCA  508F80     SUB W1, W0, [W15]
+000CCC  36FFFB     BRA LEU, .L19
+111:               
+112:                   while (!AD1CON1bits.DONE) ;       //Wait for conversion to complete
+000CCE  000000     NOP
+000CD0  801900     MOV AD1CON1, W0
+000CD2  600061     AND W0, #0x1, W0
+000CD4  E00000     CP0 W0
+000CD6  32FFFC     BRA Z, .L20
+113:               
+114:                   return ADC1BUF0 ;
+000CD8  801800     MOV ADC1BUF0, W0
+115:               }
+000CDA  FA8000     ULNK
+000CDC  060000     RETURN
+116:               /*********************************************************************
+117:                * Function: bool ADC_ChannelEnable(ADC_CHANNEL channel, ADC_CONFIGURATION configuration);
+118:                *
+119:                * Overview: Configures the ADC module to specified setting
+120:                *
+121:                * PreCondition: none
+122:                *
+123:                * Input: ADC_CHANNEL channel - the channel to enable
+124:                *        ADC_CONFIGURATION configuration - the mode in which to run the ADC
+125:                *
+126:                * Output: bool - true if successfully configured.  false otherwise.
+127:                *
+128:                ********************************************************************/
+129:               bool ADC_ChannelEnable ( ADC_CHANNEL channel )
+130:               {
+000CDE  FA0002     LNK #0x2
+000CE0  780F00     MOV W0, [W14]
+131:                   switch (channel)
+000CE2  78001E     MOV [W14], W0
+000CE4  500FE4     SUB W0, #0x4, [W15]
+000CE6  320005     BRA Z, .L25
+000CE8  500FE5     SUB W0, #0x5, [W15]
+000CEA  3A0006     BRA NZ, .L28
+132:                   {
+133:                       case ADC_CHANNEL_5:
+134:                           AD1PCFGLbits.PCFG5 = 0 ;
+000CEC  A9A32C     BCLR AD1PCFGL, #5
+135:                           return true ;
+000CEE  B3C010     MOV.B #0x1, W0
+000CF0  370004     BRA .L27
+136:               
+137:                       case ADC_CHANNEL_4:
+138:                           AD1PCFGLbits.PCFG4 = 0 ;
+000CF2  A9832C     BCLR AD1PCFGL, #4
+139:                           return true ;
+000CF4  B3C010     MOV.B #0x1, W0
+000CF6  370001     BRA .L27
+140:               
+141:                       default:
+142:                           return false ;
+000CF8  EB4000     CLR.B W0
+143:                   }
+144:               }
+000CFA  FA8000     ULNK
+000CFC  060000     RETURN
+145:               /*********************************************************************
+146:                * Function: bool ADC_SetConfiguration(ADC_CONFIGURATION configuration)
+147:                *
+148:                * Overview: Configures the ADC module to specified setting
+149:                *
+150:                * PreCondition: none
+151:                *
+152:                * Input: ADC_CONFIGURATION configuration - the mode in which to run the ADC
+153:                *
+154:                * Output: bool - true if successfully configured.  false otherwise.
+155:                *
+156:                ********************************************************************/
+157:               bool ADC_SetConfiguration ( ADC_CONFIGURATION configuration )
+158:               {
+000CFE  FA0002     LNK #0x2
+000D00  780F00     MOV W0, [W14]
+159:                   if (configuration == ADC_CONFIGURATION_DEFAULT)
+000D02  78001E     MOV [W14], W0
+000D04  E00000     CP0 W0
+000D06  3A001A     BRA NZ, .L30
+160:                   {
+161:                       AD1CON2bits.VCFG = 0x0 ;
+000D08  801911     MOV AD1CON2, W1
+000D0A  21FFF0     MOV #0x1FFF, W0
+000D0C  608000     AND W1, W0, W0
+000D0E  881910     MOV W0, AD1CON2
+162:                       AD1CON3bits.ADCS = 0xFF ;
+000D10  EBC000     SETM.B W0
+000D12  B7E324     MOV.B WREG, AD1CON3
+163:                       AD1CON1bits.SSRC = 0x0 ;
+000D14  801901     MOV AD1CON1, W1
+000D16  2FF1F0     MOV #0xFF1F, W0
+000D18  608000     AND W1, W0, W0
+000D1A  881900     MOV W0, AD1CON1
+164:                       AD1CON3bits.SAMC = 0b10000 ;
+000D1C  801921     MOV AD1CON3, W1
+000D1E  2E0FF0     MOV #0xE0FF, W0
+000D20  608000     AND W1, W0, W0
+000D22  A0C000     BSET W0, #12
+000D24  881920     MOV W0, AD1CON3
+165:                       AD1CON1bits.FORM = 0b00 ;
+000D26  801901     MOV AD1CON1, W1
+000D28  2FCFF0     MOV #0xFCFF, W0
+000D2A  608000     AND W1, W0, W0
+000D2C  881900     MOV W0, AD1CON1
+166:                       AD1CON2bits.SMPI = 0x0 ;
+000D2E  801911     MOV AD1CON2, W1
+000D30  2FFC30     MOV #0xFFC3, W0
+000D32  608000     AND W1, W0, W0
+000D34  881910     MOV W0, AD1CON2
+167:                       AD1CON1bits.ADON = 1 ;
+000D36  A8E321     BSET 0x321, #7
+168:                       return true ;
+000D38  B3C010     MOV.B #0x1, W0
+000D3A  370021     BRA .L31
+169:                   }
+170:               
+171:                   else if (configuration ==  ADC_CONFIGURATION_AUTO_SAMPLE_CONVERT)
+000D3C  78001E     MOV [W14], W0
+000D3E  500FE1     SUB W0, #0x1, [W15]
+000D40  3A001D     BRA NZ, .L32
+172:                   {
+173:                       AD1CON1bits.SSRC  = 0b111 ;
+000D42  801901     MOV AD1CON1, W1
+000D44  200E00     MOV #0xE0, W0
+000D46  700001     IOR W0, W1, W0
+000D48  881900     MOV W0, AD1CON1
+174:                       AD1CON1bits.ASAM  = 0x01 ;
+000D4A  A84320     BSET AD1CON1, #2
+175:                       AD1CON2bits.VCFG  = 0x0 ;
+000D4C  801911     MOV AD1CON2, W1
+000D4E  21FFF0     MOV #0x1FFF, W0
+000D50  608000     AND W1, W0, W0
+000D52  881910     MOV W0, AD1CON2
+176:                       AD1CON2bits.SMPI  = 0x0 ;
+000D54  801911     MOV AD1CON2, W1
+000D56  2FFC30     MOV #0xFFC3, W0
+000D58  608000     AND W1, W0, W0
+000D5A  881910     MOV W0, AD1CON2
+177:                       AD1CON2bits.CSCNA = 0x0 ;
+000D5C  A94323     BCLR 0x323, #2
+178:                       AD1CON2bits.ALTS  = 0x0 ;
+000D5E  A90322     BCLR AD1CON2, #0
+179:                       AD1CON3bits.ADCS  = 0x2F ;
+000D60  B3C2F0     MOV.B #0x2F, W0
+000D62  B7E324     MOV.B WREG, AD1CON3
+180:                       AD1CON3bits.SAMC  = 0b00011 ;
+000D64  801921     MOV AD1CON3, W1
+000D66  2E0FF0     MOV #0xE0FF, W0
+000D68  608080     AND W1, W0, W1
+000D6A  203000     MOV #0x300, W0
+000D6C  700001     IOR W0, W1, W0
+000D6E  881920     MOV W0, AD1CON3
+181:                       IEC0bits.AD1IE    = 1 ;
+000D70  A8A095     BSET 0x95, #5
+182:                       AD1CON1bits.ADON = 1 ;
+000D72  A8E321     BSET 0x321, #7
+183:                       AD1CHS0 = ADC_CHANNEL_5 ;
+000D74  200050     MOV #0x5, W0
+000D76  881940     MOV W0, AD1CHS0
+184:                       IFS0bits.AD1IF = 0 ;
+000D78  A9A085     BCLR 0x85, #5
+185:                       AD1CSSL = 0x0000 ;
+000D7A  EF2330     CLR AD1CSSL
+186:                   }
+187:               
+188:                   return false ;
+000D7C  EB4000     CLR.B W0
+189:               }
+000D7E  FA8000     ULNK
+000D80  060000     RETURN
