@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>E16LCDDemo_dspic33fj256gp710a_pim_1</name>
+            <name>E16LCDDemo_pic24fj128ga010_pim_1</name>
             <creation-uuid>f2026c1a-4a37-45c5-abf6-d8251b801cc8</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>
@@ -18,7 +18,7 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>dspic33fj256gp710a_pim</name>
+                    <name>pic24fj128ga010_pim</name>
                     <type>2</type>
                 </confElem>
             </confList>
